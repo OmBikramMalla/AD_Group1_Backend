@@ -54,6 +54,15 @@ builder.Services.AddScoped<IEnrollmentService, EnrollmentService>();
 builder.Services.AddScoped<IModuleInstructorRepository, ModuleInstructorRepository>();
 builder.Services.AddScoped<IModuleInstructorService, ModuleInstructorService>();
 
+
+// ================== CUSTOMER FEATURES ==================
+
+builder.Services.AddScoped<ICustomerService, CustomerService>();
+builder.Services.AddScoped<IReportService, ReportService>();
+builder.Services.AddScoped<IAppointmentService, AppointmentService>();
+builder.Services.AddScoped<IPartRequestService, PartRequestService>();
+builder.Services.AddScoped<IReviewService, ReviewService>();
+
 // ================== IDENTITY ==================
 
 builder.Services.AddIdentity<Users, Roles>()
@@ -82,7 +91,7 @@ using (var scope = app.Services.CreateScope())
     var userManager = scope.ServiceProvider.GetRequiredService<UserManager<Users>>();
     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<Roles>>();
 
-    string[] roles = { "Admin", "Student", "Instructor" };
+    string[] roles = { "Admin", "Staff", "Customer" };
 
     foreach (var role in roles)
     {
