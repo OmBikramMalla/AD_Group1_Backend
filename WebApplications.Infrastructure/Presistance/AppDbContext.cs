@@ -25,16 +25,26 @@ namespace WebApplications.Infrastructure.Presistance
         public DbSet<Student> Students { get; set; }
 
 
+        public DbSet<Customer> Customers { get; set; }
+        public DbSet<Vehicle> Vehicles { get; set; }
+        public DbSet<Part> Parts { get; set; }
+        public DbSet<SalesInvoice> SalesInvoices { get; set; }
+        public DbSet<SalesInvoiceItem> SalesInvoiceItems { get; set; }
+        public DbSet<ServiceAppointment> ServiceAppointments { get; set; }
+        public DbSet<ServiceReview> ServiceReviews { get; set; }
+        public DbSet<PartRequest> PartRequests { get; set; }
+
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
-            
+
             modelBuilder.Entity<Roles>().HasData(
-                new Roles { Id = 1, Name = "Admin",ConcurrencyStamp= "f6c52c5f-af53-4124-98c2-0f65d2d590e8" },
-                new Roles { Id = 2, Name = "Instructor", ConcurrencyStamp = "a1ba56f5-76e0-4067-8ebb-4e8dc04cdb94" },
-                new Roles { Id = 3, Name = "Student", ConcurrencyStamp = "ed6d49d2-0222-400f-aa77-4448a9194f93" }
-            );
+    new Roles { Id = 1, Name = "Admin", ConcurrencyStamp = Guid.NewGuid().ToString() },
+    new Roles { Id = 2, Name = "Staff", ConcurrencyStamp = Guid.NewGuid().ToString() },
+    new Roles { Id = 3, Name = "Customer", ConcurrencyStamp = Guid.NewGuid().ToString() }
+);
         }
 
     }
