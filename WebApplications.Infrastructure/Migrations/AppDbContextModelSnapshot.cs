@@ -125,26 +125,6 @@ namespace WebApplications.Infrastructure.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("WebApplications.Domain.Models.Course", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("DurationYears")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Courses");
-                });
-
             modelBuilder.Entity("WebApplications.Domain.Models.Customer", b =>
                 {
                     b.Property<long>("Id")
@@ -168,108 +148,6 @@ namespace WebApplications.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Customers");
-                });
-
-            modelBuilder.Entity("WebApplications.Domain.Models.Enrollment", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("CourseId")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime>("EnrollmentDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<int>("StudentId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CourseId");
-
-                    b.HasIndex("StudentId");
-
-                    b.ToTable("Enrollments");
-                });
-
-            modelBuilder.Entity("WebApplications.Domain.Models.Instructor", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("HireDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("LastName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Instructors");
-                });
-
-            modelBuilder.Entity("WebApplications.Domain.Models.Module", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("CourseId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("Credtis")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CourseId");
-
-                    b.ToTable("Modules");
-                });
-
-            modelBuilder.Entity("WebApplications.Domain.Models.ModuleInstructor", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("InstructorId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("ModuleId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("InstructorId");
-
-                    b.HasIndex("ModuleId");
-
-                    b.ToTable("ModuleInstructors");
                 });
 
             modelBuilder.Entity("WebApplications.Domain.Models.Part", b =>
@@ -487,38 +365,6 @@ namespace WebApplications.Infrastructure.Migrations
                     b.ToTable("ServiceReviews");
                 });
 
-            modelBuilder.Entity("WebApplications.Domain.Models.Student", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<DateOnly>("DateOfBirth")
-                        .HasColumnType("date");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("LastName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("PhoneNumber")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Students");
-                });
-
             modelBuilder.Entity("WebApplications.Domain.Models.Users", b =>
                 {
                     b.Property<long>("Id")
@@ -545,9 +391,6 @@ namespace WebApplications.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int?>("InstructorId")
-                        .HasColumnType("integer");
-
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("boolean");
 
@@ -573,9 +416,6 @@ namespace WebApplications.Infrastructure.Migrations
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("text");
-
-                    b.Property<int?>("StudentId")
-                        .HasColumnType("integer");
 
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("boolean");
@@ -677,55 +517,6 @@ namespace WebApplications.Infrastructure.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("WebApplications.Domain.Models.Enrollment", b =>
-                {
-                    b.HasOne("WebApplications.Domain.Models.Course", "Course")
-                        .WithMany("Enrollments")
-                        .HasForeignKey("CourseId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("WebApplications.Domain.Models.Student", "Student")
-                        .WithMany("Enrollments")
-                        .HasForeignKey("StudentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Course");
-
-                    b.Navigation("Student");
-                });
-
-            modelBuilder.Entity("WebApplications.Domain.Models.Module", b =>
-                {
-                    b.HasOne("WebApplications.Domain.Models.Course", "Course")
-                        .WithMany("Modules")
-                        .HasForeignKey("CourseId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Course");
-                });
-
-            modelBuilder.Entity("WebApplications.Domain.Models.ModuleInstructor", b =>
-                {
-                    b.HasOne("WebApplications.Domain.Models.Instructor", "Instructor")
-                        .WithMany("ModuleInstructors")
-                        .HasForeignKey("InstructorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("WebApplications.Domain.Models.Module", "Module")
-                        .WithMany("ModuleInstructors")
-                        .HasForeignKey("ModuleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Instructor");
-
-                    b.Navigation("Module");
-                });
-
             modelBuilder.Entity("WebApplications.Domain.Models.PartRequest", b =>
                 {
                     b.HasOne("WebApplications.Domain.Models.Customer", "Customer")
@@ -800,13 +591,6 @@ namespace WebApplications.Infrastructure.Migrations
                     b.Navigation("Customer");
                 });
 
-            modelBuilder.Entity("WebApplications.Domain.Models.Course", b =>
-                {
-                    b.Navigation("Enrollments");
-
-                    b.Navigation("Modules");
-                });
-
             modelBuilder.Entity("WebApplications.Domain.Models.Customer", b =>
                 {
                     b.Navigation("PartRequests");
@@ -820,24 +604,9 @@ namespace WebApplications.Infrastructure.Migrations
                     b.Navigation("Vehicles");
                 });
 
-            modelBuilder.Entity("WebApplications.Domain.Models.Instructor", b =>
-                {
-                    b.Navigation("ModuleInstructors");
-                });
-
-            modelBuilder.Entity("WebApplications.Domain.Models.Module", b =>
-                {
-                    b.Navigation("ModuleInstructors");
-                });
-
             modelBuilder.Entity("WebApplications.Domain.Models.SalesInvoice", b =>
                 {
                     b.Navigation("Items");
-                });
-
-            modelBuilder.Entity("WebApplications.Domain.Models.Student", b =>
-                {
-                    b.Navigation("Enrollments");
                 });
 #pragma warning restore 612, 618
         }

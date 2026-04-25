@@ -12,8 +12,8 @@ using WebApplications.Infrastructure.Presistance;
 namespace WebApplications.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260407044926_ApplicationDatabse")]
-    partial class ApplicationDatabse
+    [Migration("20260425090812_InitialVehicleInventorySchema")]
+    partial class InitialVehicleInventorySchema
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -128,126 +128,82 @@ namespace WebApplications.Infrastructure.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("WebApplications.Domain.Models.Course", b =>
+            modelBuilder.Entity("WebApplications.Domain.Models.Customer", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+                        .HasColumnType("bigint");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("DurationYears")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Courses");
-                });
-
-            modelBuilder.Entity("WebApplications.Domain.Models.Enrollment", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("CourseId")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime>("EnrollmentDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<int>("StudentId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CourseId");
-
-                    b.HasIndex("StudentId");
-
-                    b.ToTable("Enrollments");
-                });
-
-            modelBuilder.Entity("WebApplications.Domain.Models.Instructor", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("FirstName")
+                    b.Property<string>("FullName")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<DateTime>("HireDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("LastName")
+                    b.Property<string>("Phone")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Instructors");
+                    b.ToTable("Customers");
                 });
 
-            modelBuilder.Entity("WebApplications.Domain.Models.Module", b =>
+            modelBuilder.Entity("WebApplications.Domain.Models.Part", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("PartName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("numeric");
+
+                    b.Property<int>("StockQuantity")
                         .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    b.HasKey("Id");
 
-                    b.Property<int>("CourseId")
-                        .HasColumnType("integer");
+                    b.ToTable("Parts");
+                });
 
-                    b.Property<int>("Credtis")
-                        .HasColumnType("integer");
+            modelBuilder.Entity("WebApplications.Domain.Models.PartRequest", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
 
-                    b.Property<string>("Title")
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<long>("CustomerId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("RequestedPartName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("VehicleInfo")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CourseId");
+                    b.HasIndex("CustomerId");
 
-                    b.ToTable("Modules");
-                });
-
-            modelBuilder.Entity("WebApplications.Domain.Models.ModuleInstructor", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("InstructorId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("ModuleId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("InstructorId");
-
-                    b.HasIndex("ModuleId");
-
-                    b.ToTable("ModuleInstructors");
+                    b.ToTable("PartRequests");
                 });
 
             modelBuilder.Entity("WebApplications.Domain.Models.Roles", b =>
@@ -282,53 +238,134 @@ namespace WebApplications.Infrastructure.Migrations
                         new
                         {
                             Id = 1L,
-                            ConcurrencyStamp = "f6c52c5f-af53-4124-98c2-0f65d2d590e8",
+                            ConcurrencyStamp = "admin-fixed",
                             Name = "Admin"
                         },
                         new
                         {
                             Id = 2L,
-                            ConcurrencyStamp = "a1ba56f5-76e0-4067-8ebb-4e8dc04cdb94",
-                            Name = "Instructor"
+                            ConcurrencyStamp = "staff-fixed",
+                            Name = "Staff"
                         },
                         new
                         {
                             Id = 3L,
-                            ConcurrencyStamp = "ed6d49d2-0222-400f-aa77-4448a9194f93",
-                            Name = "Student"
+                            ConcurrencyStamp = "customer-fixed",
+                            Name = "Customer"
                         });
                 });
 
-            modelBuilder.Entity("WebApplications.Domain.Models.Student", b =>
+            modelBuilder.Entity("WebApplications.Domain.Models.SalesInvoice", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<long>("CustomerId")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("InvoiceDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<decimal>("PaidAmount")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal>("TotalAmount")
+                        .HasColumnType("numeric");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CustomerId");
+
+                    b.ToTable("SalesInvoices");
+                });
+
+            modelBuilder.Entity("WebApplications.Domain.Models.SalesInvoiceItem", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<long>("PartId")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("Quantity")
                         .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    b.Property<long>("SalesInvoiceId")
+                        .HasColumnType("bigint");
 
-                    b.Property<DateOnly>("DateOfBirth")
-                        .HasColumnType("date");
+                    b.Property<decimal>("UnitPrice")
+                        .HasColumnType("numeric");
 
-                    b.Property<string>("Email")
+                    b.HasKey("Id");
+
+                    b.HasIndex("PartId");
+
+                    b.HasIndex("SalesInvoiceId");
+
+                    b.ToTable("SalesInvoiceItems");
+                });
+
+            modelBuilder.Entity("WebApplications.Domain.Models.ServiceAppointment", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTime>("AppointmentDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<long>("CustomerId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("ServiceType")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("LastName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("PhoneNumber")
+                    b.Property<string>("Status")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Students");
+                    b.HasIndex("CustomerId");
+
+                    b.ToTable("ServiceAppointments");
+                });
+
+            modelBuilder.Entity("WebApplications.Domain.Models.ServiceReview", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("Comment")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<long>("CustomerId")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("Rating")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("ReviewDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CustomerId");
+
+                    b.ToTable("ServiceReviews");
                 });
 
             modelBuilder.Entity("WebApplications.Domain.Models.Users", b =>
@@ -357,9 +394,6 @@ namespace WebApplications.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int?>("InstructorId")
-                        .HasColumnType("integer");
-
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("boolean");
 
@@ -386,9 +420,6 @@ namespace WebApplications.Infrastructure.Migrations
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("text");
 
-                    b.Property<int?>("StudentId")
-                        .HasColumnType("integer");
-
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("boolean");
 
@@ -406,6 +437,36 @@ namespace WebApplications.Infrastructure.Migrations
                         .HasDatabaseName("UserNameIndex");
 
                     b.ToTable("AspNetUsers", (string)null);
+                });
+
+            modelBuilder.Entity("WebApplications.Domain.Models.Vehicle", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<long>("CustomerId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("VehicleBrand")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("VehicleModel")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("VehicleNumber")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CustomerId");
+
+                    b.ToTable("Vehicles");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<long>", b =>
@@ -459,75 +520,96 @@ namespace WebApplications.Infrastructure.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("WebApplications.Domain.Models.Enrollment", b =>
+            modelBuilder.Entity("WebApplications.Domain.Models.PartRequest", b =>
                 {
-                    b.HasOne("WebApplications.Domain.Models.Course", "Course")
-                        .WithMany("Enrollments")
-                        .HasForeignKey("CourseId")
+                    b.HasOne("WebApplications.Domain.Models.Customer", "Customer")
+                        .WithMany("PartRequests")
+                        .HasForeignKey("CustomerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("WebApplications.Domain.Models.Student", "Student")
-                        .WithMany("Enrollments")
-                        .HasForeignKey("StudentId")
+                    b.Navigation("Customer");
+                });
+
+            modelBuilder.Entity("WebApplications.Domain.Models.SalesInvoice", b =>
+                {
+                    b.HasOne("WebApplications.Domain.Models.Customer", "Customer")
+                        .WithMany("SalesInvoices")
+                        .HasForeignKey("CustomerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Course");
-
-                    b.Navigation("Student");
+                    b.Navigation("Customer");
                 });
 
-            modelBuilder.Entity("WebApplications.Domain.Models.Module", b =>
+            modelBuilder.Entity("WebApplications.Domain.Models.SalesInvoiceItem", b =>
                 {
-                    b.HasOne("WebApplications.Domain.Models.Course", "Course")
-                        .WithMany("Modules")
-                        .HasForeignKey("CourseId")
+                    b.HasOne("WebApplications.Domain.Models.Part", "Part")
+                        .WithMany()
+                        .HasForeignKey("PartId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Course");
-                });
-
-            modelBuilder.Entity("WebApplications.Domain.Models.ModuleInstructor", b =>
-                {
-                    b.HasOne("WebApplications.Domain.Models.Instructor", "Instructor")
-                        .WithMany("ModuleInstructors")
-                        .HasForeignKey("InstructorId")
+                    b.HasOne("WebApplications.Domain.Models.SalesInvoice", "SalesInvoice")
+                        .WithMany("Items")
+                        .HasForeignKey("SalesInvoiceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("WebApplications.Domain.Models.Module", "Module")
-                        .WithMany("ModuleInstructors")
-                        .HasForeignKey("ModuleId")
+                    b.Navigation("Part");
+
+                    b.Navigation("SalesInvoice");
+                });
+
+            modelBuilder.Entity("WebApplications.Domain.Models.ServiceAppointment", b =>
+                {
+                    b.HasOne("WebApplications.Domain.Models.Customer", "Customer")
+                        .WithMany("ServiceAppointments")
+                        .HasForeignKey("CustomerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Instructor");
-
-                    b.Navigation("Module");
+                    b.Navigation("Customer");
                 });
 
-            modelBuilder.Entity("WebApplications.Domain.Models.Course", b =>
+            modelBuilder.Entity("WebApplications.Domain.Models.ServiceReview", b =>
                 {
-                    b.Navigation("Enrollments");
+                    b.HasOne("WebApplications.Domain.Models.Customer", "Customer")
+                        .WithMany("ServiceReviews")
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.Navigation("Modules");
+                    b.Navigation("Customer");
                 });
 
-            modelBuilder.Entity("WebApplications.Domain.Models.Instructor", b =>
+            modelBuilder.Entity("WebApplications.Domain.Models.Vehicle", b =>
                 {
-                    b.Navigation("ModuleInstructors");
+                    b.HasOne("WebApplications.Domain.Models.Customer", "Customer")
+                        .WithMany("Vehicles")
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Customer");
                 });
 
-            modelBuilder.Entity("WebApplications.Domain.Models.Module", b =>
+            modelBuilder.Entity("WebApplications.Domain.Models.Customer", b =>
                 {
-                    b.Navigation("ModuleInstructors");
+                    b.Navigation("PartRequests");
+
+                    b.Navigation("SalesInvoices");
+
+                    b.Navigation("ServiceAppointments");
+
+                    b.Navigation("ServiceReviews");
+
+                    b.Navigation("Vehicles");
                 });
 
-            modelBuilder.Entity("WebApplications.Domain.Models.Student", b =>
+            modelBuilder.Entity("WebApplications.Domain.Models.SalesInvoice", b =>
                 {
-                    b.Navigation("Enrollments");
+                    b.Navigation("Items");
                 });
 #pragma warning restore 612, 618
         }

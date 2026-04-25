@@ -13,17 +13,6 @@ namespace WebApplications.Infrastructure.Presistance
         {
 
         }
-        
-        public DbSet<Course> Courses { get; set; }
-        public DbSet<Module> Modules { get; set; }
-
-        public DbSet<Instructor> Instructors { get; set; }
-
-        public DbSet<ModuleInstructor> ModuleInstructors { get; set; } 
-
-        public DbSet<Enrollment> Enrollments { get; set; }
-        public DbSet<Student> Students { get; set; }
-
 
         public DbSet<Customer> Customers { get; set; }
         public DbSet<Vehicle> Vehicles { get; set; }
