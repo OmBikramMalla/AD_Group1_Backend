@@ -58,10 +58,10 @@ builder.Services.AddScoped<IModuleInstructorService, ModuleInstructorService>();
 // ================== CUSTOMER FEATURES ==================
 
 builder.Services.AddScoped<ICustomerService, CustomerService>();
-builder.Services.AddScoped<IReportService, ReportService>();
-builder.Services.AddScoped<IAppointmentService, AppointmentService>();
-builder.Services.AddScoped<IPartRequestService, PartRequestService>();
-builder.Services.AddScoped<IReviewService, ReviewService>();
+//builder.Services.AddScoped<IReportService, ReportService>();
+//builder.Services.AddScoped<IAppointmentService, AppointmentService>();
+//builder.Services.AddScoped<IPartRequestService, PartRequestService>();
+//builder.Services.AddScoped<IReviewService, ReviewService>();
 
 // ================== IDENTITY ==================
 
@@ -86,36 +86,36 @@ app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 // ================== ROLE + ADMIN SEEDING ==================
 
-using (var scope = app.Services.CreateScope())
-{
-    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<Users>>();
-    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<Roles>>();
+//using (var scope = app.Services.CreateScope())
+//{
+//    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<Users>>();
+//    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<Roles>>();
 
-    string[] roles = { "Admin", "Staff", "Customer" };
+//    string[] roles = { "Admin", "Staff", "Customer" };
 
-    foreach (var role in roles)
-    {
-        if (!await roleManager.RoleExistsAsync(role))
-        {
-            await roleManager.CreateAsync(new Roles { Name = role });
-        }
-    }
+//    foreach (var role in roles)
+//    {
+//        if (!await roleManager.RoleExistsAsync(role))
+//        {
+//            await roleManager.CreateAsync(new Roles { Name = role });
+//        }
+//    }
 
-    var adminEmail = "admin@gmail.com";
+//    var adminEmail = "admin@gmail.com";
 
-    if (await userManager.FindByEmailAsync(adminEmail) == null)
-    {
-        var admin = new Users
-        {
-            FullName = "Admin",
-            Email = adminEmail,
-            UserName = adminEmail
-        };
+//    if (await userManager.FindByEmailAsync(adminEmail) == null)
+//    {
+//        var admin = new Users
+//        {
+//            FullName = "Admin",
+//            Email = adminEmail,
+//            UserName = adminEmail
+//        };
 
-        await userManager.CreateAsync(admin, "Admin@123");
-        await userManager.AddToRoleAsync(admin, "Admin");
-    }
-}
+//        await userManager.CreateAsync(admin, "Admin@123");
+//        await userManager.AddToRoleAsync(admin, "Admin");
+//    }
+//}
 
 // ================== PIPELINE ==================
 

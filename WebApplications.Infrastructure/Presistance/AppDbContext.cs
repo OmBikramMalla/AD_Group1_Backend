@@ -41,9 +41,9 @@ namespace WebApplications.Infrastructure.Presistance
 
 
             modelBuilder.Entity<Roles>().HasData(
-    new Roles { Id = 1, Name = "Admin", ConcurrencyStamp = Guid.NewGuid().ToString() },
-    new Roles { Id = 2, Name = "Staff", ConcurrencyStamp = Guid.NewGuid().ToString() },
-    new Roles { Id = 3, Name = "Customer", ConcurrencyStamp = Guid.NewGuid().ToString() }
+    new Roles { Id = 1, Name = "Admin", ConcurrencyStamp = "admin-fixed" },
+    new Roles { Id = 2, Name = "Staff", ConcurrencyStamp = "staff-fixed" },
+    new Roles { Id = 3, Name = "Customer", ConcurrencyStamp = "customer-fixed" }
 );
         }
 

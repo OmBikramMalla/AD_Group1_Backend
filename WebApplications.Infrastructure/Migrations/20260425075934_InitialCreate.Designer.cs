@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using WebApplications.Infrastructure.Presistance;
@@ -11,9 +12,11 @@ using WebApplications.Infrastructure.Presistance;
 namespace WebApplications.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260425075934_InitialCreate")]
+    partial class InitialCreate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -357,19 +360,19 @@ namespace WebApplications.Infrastructure.Migrations
                         new
                         {
                             Id = 1L,
-                            ConcurrencyStamp = "admin-fixed",
+                            ConcurrencyStamp = "04573ab1-d906-47cf-af89-cf9c09c2e5f2",
                             Name = "Admin"
                         },
                         new
                         {
                             Id = 2L,
-                            ConcurrencyStamp = "staff-fixed",
+                            ConcurrencyStamp = "6c608555-5efb-4261-84f7-5a89ed726c31",
                             Name = "Staff"
                         },
                         new
                         {
                             Id = 3L,
-                            ConcurrencyStamp = "customer-fixed",
+                            ConcurrencyStamp = "5d77490c-0f03-4fd8-80f5-0a347e5de693",
                             Name = "Customer"
                         });
                 });
