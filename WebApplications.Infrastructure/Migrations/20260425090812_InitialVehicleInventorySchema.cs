@@ -9,7 +9,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace WebApplications.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class ApplicationDatabse : Migration
+    public partial class InitialVehicleInventorySchema : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -36,8 +36,6 @@ namespace WebApplications.Infrastructure.Migrations
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     FullName = table.Column<string>(type: "text", nullable: false),
-                    StudentId = table.Column<int>(type: "integer", nullable: true),
-                    InstructorId = table.Column<int>(type: "integer", nullable: true),
                     UserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
@@ -59,50 +57,33 @@ namespace WebApplications.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Courses",
+                name: "Customers",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
+                    Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Name = table.Column<string>(type: "text", nullable: false),
-                    DurationYears = table.Column<int>(type: "integer", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Courses", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Instructors",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    FirstName = table.Column<string>(type: "text", nullable: false),
-                    LastName = table.Column<string>(type: "text", nullable: false),
-                    Email = table.Column<string>(type: "text", nullable: false),
-                    HireDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Instructors", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Students",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    FirstName = table.Column<string>(type: "text", nullable: false),
-                    LastName = table.Column<string>(type: "text", nullable: false),
-                    DateOfBirth = table.Column<DateOnly>(type: "date", nullable: false),
-                    PhoneNumber = table.Column<string>(type: "text", nullable: false),
+                    FullName = table.Column<string>(type: "text", nullable: false),
+                    Phone = table.Column<string>(type: "text", nullable: false),
                     Email = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Students", x => x.Id);
+                    table.PrimaryKey("PK_Customers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Parts",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    PartName = table.Column<string>(type: "text", nullable: false),
+                    Price = table.Column<decimal>(type: "numeric", nullable: false),
+                    StockQuantity = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Parts", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -212,75 +193,139 @@ namespace WebApplications.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Modules",
+                name: "PartRequests",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
+                    Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Title = table.Column<string>(type: "text", nullable: false),
-                    Credtis = table.Column<int>(type: "integer", nullable: false),
-                    CourseId = table.Column<int>(type: "integer", nullable: false)
+                    RequestedPartName = table.Column<string>(type: "text", nullable: false),
+                    VehicleInfo = table.Column<string>(type: "text", nullable: false),
+                    Status = table.Column<string>(type: "text", nullable: false),
+                    CustomerId = table.Column<long>(type: "bigint", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Modules", x => x.Id);
+                    table.PrimaryKey("PK_PartRequests", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Modules_Courses_CourseId",
-                        column: x => x.CourseId,
-                        principalTable: "Courses",
+                        name: "FK_PartRequests_Customers_CustomerId",
+                        column: x => x.CustomerId,
+                        principalTable: "Customers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Enrollments",
+                name: "SalesInvoices",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
+                    Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    StudentId = table.Column<int>(type: "integer", nullable: false),
-                    CourseId = table.Column<int>(type: "integer", nullable: false),
-                    EnrollmentDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    InvoiceDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    TotalAmount = table.Column<decimal>(type: "numeric", nullable: false),
+                    PaidAmount = table.Column<decimal>(type: "numeric", nullable: false),
+                    CustomerId = table.Column<long>(type: "bigint", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Enrollments", x => x.Id);
+                    table.PrimaryKey("PK_SalesInvoices", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Enrollments_Courses_CourseId",
-                        column: x => x.CourseId,
-                        principalTable: "Courses",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Enrollments_Students_StudentId",
-                        column: x => x.StudentId,
-                        principalTable: "Students",
+                        name: "FK_SalesInvoices_Customers_CustomerId",
+                        column: x => x.CustomerId,
+                        principalTable: "Customers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "ModuleInstructors",
+                name: "ServiceAppointments",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
+                    Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    ModuleId = table.Column<int>(type: "integer", nullable: false),
-                    InstructorId = table.Column<int>(type: "integer", nullable: false)
+                    AppointmentDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    ServiceType = table.Column<string>(type: "text", nullable: false),
+                    Status = table.Column<string>(type: "text", nullable: false),
+                    CustomerId = table.Column<long>(type: "bigint", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ModuleInstructors", x => x.Id);
+                    table.PrimaryKey("PK_ServiceAppointments", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ModuleInstructors_Instructors_InstructorId",
-                        column: x => x.InstructorId,
-                        principalTable: "Instructors",
+                        name: "FK_ServiceAppointments_Customers_CustomerId",
+                        column: x => x.CustomerId,
+                        principalTable: "Customers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ServiceReviews",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Rating = table.Column<int>(type: "integer", nullable: false),
+                    Comment = table.Column<string>(type: "text", nullable: false),
+                    ReviewDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CustomerId = table.Column<long>(type: "bigint", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ServiceReviews", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ServiceReviews_Customers_CustomerId",
+                        column: x => x.CustomerId,
+                        principalTable: "Customers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Vehicles",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    VehicleNumber = table.Column<string>(type: "text", nullable: false),
+                    VehicleModel = table.Column<string>(type: "text", nullable: false),
+                    VehicleBrand = table.Column<string>(type: "text", nullable: false),
+                    CustomerId = table.Column<long>(type: "bigint", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Vehicles", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Vehicles_Customers_CustomerId",
+                        column: x => x.CustomerId,
+                        principalTable: "Customers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "SalesInvoiceItems",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Quantity = table.Column<int>(type: "integer", nullable: false),
+                    UnitPrice = table.Column<decimal>(type: "numeric", nullable: false),
+                    SalesInvoiceId = table.Column<long>(type: "bigint", nullable: false),
+                    PartId = table.Column<long>(type: "bigint", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SalesInvoiceItems", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_SalesInvoiceItems_Parts_PartId",
+                        column: x => x.PartId,
+                        principalTable: "Parts",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_ModuleInstructors_Modules_ModuleId",
-                        column: x => x.ModuleId,
-                        principalTable: "Modules",
+                        name: "FK_SalesInvoiceItems_SalesInvoices_SalesInvoiceId",
+                        column: x => x.SalesInvoiceId,
+                        principalTable: "SalesInvoices",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -290,9 +335,9 @@ namespace WebApplications.Infrastructure.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { 1L, "f6c52c5f-af53-4124-98c2-0f65d2d590e8", "Admin", null },
-                    { 2L, "a1ba56f5-76e0-4067-8ebb-4e8dc04cdb94", "Instructor", null },
-                    { 3L, "ed6d49d2-0222-400f-aa77-4448a9194f93", "Student", null }
+                    { 1L, "admin-fixed", "Admin", null },
+                    { 2L, "staff-fixed", "Staff", null },
+                    { 3L, "customer-fixed", "Customer", null }
                 });
 
             migrationBuilder.CreateIndex(
@@ -333,29 +378,39 @@ namespace WebApplications.Infrastructure.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Enrollments_CourseId",
-                table: "Enrollments",
-                column: "CourseId");
+                name: "IX_PartRequests_CustomerId",
+                table: "PartRequests",
+                column: "CustomerId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Enrollments_StudentId",
-                table: "Enrollments",
-                column: "StudentId");
+                name: "IX_SalesInvoiceItems_PartId",
+                table: "SalesInvoiceItems",
+                column: "PartId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModuleInstructors_InstructorId",
-                table: "ModuleInstructors",
-                column: "InstructorId");
+                name: "IX_SalesInvoiceItems_SalesInvoiceId",
+                table: "SalesInvoiceItems",
+                column: "SalesInvoiceId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModuleInstructors_ModuleId",
-                table: "ModuleInstructors",
-                column: "ModuleId");
+                name: "IX_SalesInvoices_CustomerId",
+                table: "SalesInvoices",
+                column: "CustomerId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Modules_CourseId",
-                table: "Modules",
-                column: "CourseId");
+                name: "IX_ServiceAppointments_CustomerId",
+                table: "ServiceAppointments",
+                column: "CustomerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ServiceReviews_CustomerId",
+                table: "ServiceReviews",
+                column: "CustomerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Vehicles_CustomerId",
+                table: "Vehicles",
+                column: "CustomerId");
         }
 
         /// <inheritdoc />
@@ -377,10 +432,19 @@ namespace WebApplications.Infrastructure.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "Enrollments");
+                name: "PartRequests");
 
             migrationBuilder.DropTable(
-                name: "ModuleInstructors");
+                name: "SalesInvoiceItems");
+
+            migrationBuilder.DropTable(
+                name: "ServiceAppointments");
+
+            migrationBuilder.DropTable(
+                name: "ServiceReviews");
+
+            migrationBuilder.DropTable(
+                name: "Vehicles");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
@@ -389,16 +453,13 @@ namespace WebApplications.Infrastructure.Migrations
                 name: "AspNetUsers");
 
             migrationBuilder.DropTable(
-                name: "Students");
+                name: "Parts");
 
             migrationBuilder.DropTable(
-                name: "Instructors");
+                name: "SalesInvoices");
 
             migrationBuilder.DropTable(
-                name: "Modules");
-
-            migrationBuilder.DropTable(
-                name: "Courses");
+                name: "Customers");
         }
     }
 }

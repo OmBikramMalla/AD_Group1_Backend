@@ -13,28 +13,27 @@ namespace WebApplications.Infrastructure.Presistance
         {
 
         }
-        
-        public DbSet<Course> Courses { get; set; }
-        public DbSet<Module> Modules { get; set; }
 
-        public DbSet<Instructor> Instructors { get; set; }
-
-        public DbSet<ModuleInstructor> ModuleInstructors { get; set; } 
-
-        public DbSet<Enrollment> Enrollments { get; set; }
-        public DbSet<Student> Students { get; set; }
+        public DbSet<Customer> Customers { get; set; }
+        public DbSet<Vehicle> Vehicles { get; set; }
+        public DbSet<Part> Parts { get; set; }
+        public DbSet<SalesInvoice> SalesInvoices { get; set; }
+        public DbSet<SalesInvoiceItem> SalesInvoiceItems { get; set; }
+        public DbSet<ServiceAppointment> ServiceAppointments { get; set; }
+        public DbSet<ServiceReview> ServiceReviews { get; set; }
+        public DbSet<PartRequest> PartRequests { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
-            
+
             modelBuilder.Entity<Roles>().HasData(
-                new Roles { Id = 1, Name = "Admin",ConcurrencyStamp= "f6c52c5f-af53-4124-98c2-0f65d2d590e8" },
-                new Roles { Id = 2, Name = "Instructor", ConcurrencyStamp = "a1ba56f5-76e0-4067-8ebb-4e8dc04cdb94" },
-                new Roles { Id = 3, Name = "Student", ConcurrencyStamp = "ed6d49d2-0222-400f-aa77-4448a9194f93" }
-            );
+    new Roles { Id = 1, Name = "Admin", ConcurrencyStamp = "admin-fixed" },
+    new Roles { Id = 2, Name = "Staff", ConcurrencyStamp = "staff-fixed" },
+    new Roles { Id = 3, Name = "Customer", ConcurrencyStamp = "customer-fixed" }
+);
         }
 
     }
