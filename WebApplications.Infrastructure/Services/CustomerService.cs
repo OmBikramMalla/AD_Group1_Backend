@@ -38,5 +38,9 @@ namespace WebApplications.Infrastructure.Services
         {
             return await _customerRepository.CreateAppointmentAsync(dto);
         }
+        public async Task<PartRequest> CreatePartRequestAsync(CreatePartRequestDto dto)
+        {
+            return await _customerRepository.CreatePartRequestAsync(dto);
+        }
     }
 }

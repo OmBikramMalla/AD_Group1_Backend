@@ -10,5 +10,6 @@ namespace WebApplications.Application.Interfaces.IRepositories
         Task<object?> GetCustomerDetailsWithHistoryAsync(long id);
         Task<Customer> RegisterCustomerWithVehicleAsync(RegisterCustomerDto dto);
         Task<ServiceAppointment> CreateAppointmentAsync(CreateAppointmentDto dto);
+        Task<PartRequest> CreatePartRequestAsync(CreatePartRequestDto dto);
     }
 }

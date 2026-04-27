@@ -82,5 +82,21 @@ namespace WebApplications.Infrastructure.Repositories
 
             return appointment;
         }
+
+        public async Task<PartRequest> CreatePartRequestAsync(CreatePartRequestDto dto)
+        {
+            var request = new PartRequest
+            {
+                CustomerId = dto.CustomerId,
+                RequestedPartName = dto.RequestedPartName,
+                VehicleInfo = dto.VehicleInfo,
+                Status = "Pending"
+            };
+
+            _context.PartRequests.Add(request);
+            await _context.SaveChangesAsync();
+
+            return request;
+        }
     }
 }
