@@ -68,5 +68,21 @@ namespace WebApplications.Infrastructure.Services
 
             return customer;
         }
+
+        public async Task<ServiceAppointment> CreateAppointmentAsync(CreateAppointmentDto dto)
+        {
+            var appointment = new ServiceAppointment
+            {
+                CustomerId = dto.CustomerId,
+                AppointmentDate = DateTime.SpecifyKind(dto.AppointmentDate, DateTimeKind.Utc),
+                ServiceType = dto.ServiceType,
+                Status = "Pending"
+            };
+
+            _context.ServiceAppointments.Add(appointment);
+            await _context.SaveChangesAsync();
+
+            return appointment;
+        }
     }
 }

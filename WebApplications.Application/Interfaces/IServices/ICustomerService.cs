@@ -9,5 +9,7 @@ namespace WebApplications.Application.Interfaces.IServices
         Task<Customer?> GetCustomerByIdAsync(long id);
         Task<object?> GetCustomerDetailsWithHistoryAsync(long id);
         Task<Customer> RegisterCustomerWithVehicleAsync(RegisterCustomerDto dto);
+
+        Task<ServiceAppointment> CreateAppointmentAsync(CreateAppointmentDto dto);
     }
 }
