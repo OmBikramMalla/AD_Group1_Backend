@@ -35,6 +35,9 @@ builder.Services.AddScoped<IPartRequestService, PartRequestService>();
 builder.Services.AddScoped<IReviewRepository, ReviewRepository>();
 builder.Services.AddScoped<IReviewService, ReviewService>();
 
+builder.Services.AddScoped<ICustomerHistoryRepository, CustomerHistoryRepository>();
+builder.Services.AddScoped<ICustomerHistoryService, CustomerHistoryService>();
+
 // Identity
 builder.Services.AddIdentity<Users, Roles>()
     .AddEntityFrameworkStores<AppDbContext>()
