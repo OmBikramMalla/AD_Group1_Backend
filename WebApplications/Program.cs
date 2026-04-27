@@ -7,6 +7,8 @@ using WebApplications.Domain.Models;
 using WebApplications.Infrastructure.Helpers;
 using WebApplications.Infrastructure.Presistance;
 using WebApplications.Infrastructure.Services;
+using WebApplications.Application.Interfaces.IRepositories;
+using WebApplications.Infrastructure.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,6 +20,8 @@ builder.Services.AddOpenApi();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("defaultConnection"))
 );
+
+builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
 
 // Customer Feature Services
 builder.Services.AddScoped<ICustomerService, CustomerService>();
