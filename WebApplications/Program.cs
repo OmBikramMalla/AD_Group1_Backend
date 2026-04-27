@@ -10,11 +10,13 @@ using WebApplications.Infrastructure.Services;
 using WebApplications.Application.Interfaces.IRepositories;
 using WebApplications.Infrastructure.Repositories;
 
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Controllers + OpenAPI
+// Controllers + Swagger
 builder.Services.AddControllers();
-builder.Services.AddOpenApi();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 // Database
 builder.Services.AddDbContext<AppDbContext>(options =>
@@ -22,9 +24,16 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 );
 
 builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
-
-// Customer Feature Services
 builder.Services.AddScoped<ICustomerService, CustomerService>();
+
+builder.Services.AddScoped<IAppointmentRepository, AppointmentRepository>();
+builder.Services.AddScoped<IAppointmentService, AppointmentService>();
+
+builder.Services.AddScoped<IPartRequestRepository, PartRequestRepository>();
+builder.Services.AddScoped<IPartRequestService, PartRequestService>();
+
+builder.Services.AddScoped<IReviewRepository, ReviewRepository>();
+builder.Services.AddScoped<IReviewService, ReviewService>();
 
 // Identity
 builder.Services.AddIdentity<Users, Roles>()
@@ -43,11 +52,9 @@ var app = builder.Build();
 // Exception Middleware
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 
-// OpenAPI
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();
-}
+app.UseSwagger();
+app.UseSwaggerUI();
+
 
 // Pipeline
 app.UseHttpsRedirection();

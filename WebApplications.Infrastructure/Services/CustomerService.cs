@@ -14,37 +14,24 @@ namespace WebApplications.Infrastructure.Services
             _customerRepository = customerRepository;
         }
 
-        public async Task<List<Customer>> GetAllCustomersAsync()
+        public Task<List<Customer>> GetAllCustomersAsync()
         {
-            return await _customerRepository.GetAllCustomersAsync();
+            return _customerRepository.GetAllCustomersAsync();
         }
 
-        public async Task<Customer?> GetCustomerByIdAsync(long id)
+        public Task<Customer?> GetCustomerByIdAsync(long id)
         {
-            return await _customerRepository.GetCustomerByIdAsync(id);
+            return _customerRepository.GetCustomerByIdAsync(id);
         }
 
-        public async Task<object?> GetCustomerDetailsWithHistoryAsync(long id)
+        public Task<object?> GetCustomerDetailsWithHistoryAsync(long id)
         {
-            return await _customerRepository.GetCustomerDetailsWithHistoryAsync(id);
+            return _customerRepository.GetCustomerDetailsWithHistoryAsync(id);
         }
 
-        public async Task<Customer> RegisterCustomerWithVehicleAsync(RegisterCustomerDto dto)
+        public Task<Customer> RegisterCustomerWithVehicleAsync(RegisterCustomerDto dto)
         {
-            return await _customerRepository.RegisterCustomerWithVehicleAsync(dto);
-        }
-
-        public async Task<ServiceAppointment> CreateAppointmentAsync(CreateAppointmentDto dto)
-        {
-            return await _customerRepository.CreateAppointmentAsync(dto);
-        }
-        public async Task<PartRequest> CreatePartRequestAsync(CreatePartRequestDto dto)
-        {
-            return await _customerRepository.CreatePartRequestAsync(dto);
-        }
-        public async Task<ServiceReview> CreateReviewAsync(CreateReviewDto dto)
-        {
-            return await _customerRepository.CreateReviewAsync(dto);
+            return _customerRepository.RegisterCustomerWithVehicleAsync(dto);
         }
     }
 }

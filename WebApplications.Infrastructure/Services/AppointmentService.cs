@@ -1,0 +1,22 @@
+using WebApplications.Application.DTOs;
+using WebApplications.Application.Interfaces.IRepositories;
+using WebApplications.Application.Interfaces.IServices;
+using WebApplications.Domain.Models;
+
+namespace WebApplications.Infrastructure.Services
+{
+    public class AppointmentService : IAppointmentService
+    {
+        private readonly IAppointmentRepository _appointmentRepository;
+
+        public AppointmentService(IAppointmentRepository appointmentRepository)
+        {
+            _appointmentRepository = appointmentRepository;
+        }
+
+        public Task<ServiceAppointment> CreateAppointmentAsync(CreateAppointmentDto dto)
+        {
+            return _appointmentRepository.CreateAppointmentAsync(dto);
+        }
+    }
+}

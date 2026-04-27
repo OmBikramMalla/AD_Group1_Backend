@@ -1,5 +1,5 @@
-using WebApplications.Domain.Models;
 using WebApplications.Application.DTOs;
+using WebApplications.Domain.Models;
 
 namespace WebApplications.Application.Interfaces.IServices
 {
@@ -9,9 +9,5 @@ namespace WebApplications.Application.Interfaces.IServices
         Task<Customer?> GetCustomerByIdAsync(long id);
         Task<object?> GetCustomerDetailsWithHistoryAsync(long id);
         Task<Customer> RegisterCustomerWithVehicleAsync(RegisterCustomerDto dto);
-
-        Task<ServiceAppointment> CreateAppointmentAsync(CreateAppointmentDto dto);
-        Task<PartRequest> CreatePartRequestAsync(CreatePartRequestDto dto);
-        Task<ServiceReview> CreateReviewAsync(CreateReviewDto dto);
     }
 }
