@@ -42,5 +42,9 @@ namespace WebApplications.Infrastructure.Services
         {
             return await _customerRepository.CreatePartRequestAsync(dto);
         }
+        public async Task<ServiceReview> CreateReviewAsync(CreateReviewDto dto)
+        {
+            return await _customerRepository.CreateReviewAsync(dto);
+        }
     }
 }

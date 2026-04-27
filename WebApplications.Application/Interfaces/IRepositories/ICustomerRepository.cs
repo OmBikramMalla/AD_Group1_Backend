@@ -11,5 +11,6 @@ namespace WebApplications.Application.Interfaces.IRepositories
         Task<Customer> RegisterCustomerWithVehicleAsync(RegisterCustomerDto dto);
         Task<ServiceAppointment> CreateAppointmentAsync(CreateAppointmentDto dto);
         Task<PartRequest> CreatePartRequestAsync(CreatePartRequestDto dto);
+        Task<ServiceReview> CreateReviewAsync(CreateReviewDto dto);
     }
 }

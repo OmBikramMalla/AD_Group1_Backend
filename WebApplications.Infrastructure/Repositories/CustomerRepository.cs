@@ -98,5 +98,21 @@ namespace WebApplications.Infrastructure.Repositories
 
             return request;
         }
+
+        public async Task<ServiceReview> CreateReviewAsync(CreateReviewDto dto)
+        {
+            var review = new ServiceReview
+            {
+                CustomerId = dto.CustomerId,
+                Rating = dto.Rating,
+                Comment = dto.Comment,
+                ReviewDate = DateTime.UtcNow
+            };
+
+            _context.ServiceReviews.Add(review);
+            await _context.SaveChangesAsync();
+
+            return review;
+        }
     }
 }

@@ -12,5 +12,6 @@ namespace WebApplications.Application.Interfaces.IServices
 
         Task<ServiceAppointment> CreateAppointmentAsync(CreateAppointmentDto dto);
         Task<PartRequest> CreatePartRequestAsync(CreatePartRequestDto dto);
+        Task<ServiceReview> CreateReviewAsync(CreateReviewDto dto);
     }
 }
