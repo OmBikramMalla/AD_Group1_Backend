@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using WebApplications.Application.Interfaces.IServices;
 using WebApplications.Domain.Models;
 using WebApplications.Infrastructure.Presistance;
+using WebApplications.Application.DTOs;
 
 namespace WebApplications.Infrastructure.Services
 {
@@ -39,6 +40,31 @@ namespace WebApplications.Infrastructure.Services
                     Appointments = _context.ServiceAppointments.Where(a => a.CustomerId == c.Id).ToList()
                 })
                 .FirstOrDefaultAsync();
+
+            return customer;
+        }
+
+        public async Task<Customer> RegisterCustomerWithVehicleAsync(RegisterCustomerDto dto)
+        {
+            var customer = new Customer
+            {
+                FullName = dto.FullName,
+                Phone = dto.Phone,
+                Email = dto.Email
+            };
+
+            var vehicle = new Vehicle
+            {
+                VehicleNumber = dto.VehicleNumber,
+                VehicleModel = dto.VehicleModel,
+                VehicleBrand = dto.VehicleBrand,
+                Customer = customer
+            };
+
+            _context.Customers.Add(customer);
+            _context.Vehicles.Add(vehicle);
+
+            await _context.SaveChangesAsync();
 
             return customer;
         }
