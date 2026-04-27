@@ -8,23 +8,33 @@ namespace WebApplications.Controllers
     [ApiController]
     public class ReviewsController : ControllerBase
     {
-        private readonly ICustomerService _customerService;
+        private readonly IReviewService _reviewService;
 
-        public ReviewsController(ICustomerService customerService)
+        public ReviewsController(IReviewService reviewService)
         {
-            _customerService = customerService;
+            _reviewService = reviewService;
         }
 
         [HttpPost]
         public async Task<IActionResult> CreateReview(CreateReviewDto dto)
         {
-            var result = await _customerService.CreateReviewAsync(dto);
-
-            return Ok(new
+            try
             {
-                message = "Review submitted",
-                review = result
-            });
+                var result = await _reviewService.CreateReviewAsync(dto);
+
+                return Ok(new
+                {
+                    message = "Review submitted successfully",
+                    review = result
+                });
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new
+                {
+                    message = ex.Message
+                });
+            }
         }
     }
 }

@@ -8,17 +8,17 @@ namespace WebApplications.Controllers
     [ApiController]
     public class PartRequestsController : ControllerBase
     {
-        private readonly ICustomerService _customerService;
+        private readonly IPartRequestService _partRequestService;
 
-        public PartRequestsController(ICustomerService customerService)
+        public PartRequestsController(IPartRequestService partRequestService)
         {
-            _customerService = customerService;
+            _partRequestService = partRequestService;
         }
 
         [HttpPost]
         public async Task<IActionResult> CreatePartRequest(CreatePartRequestDto dto)
         {
-            var result = await _customerService.CreatePartRequestAsync(dto);
+            var result = await _partRequestService.CreatePartRequestAsync(dto);
 
             return Ok(new
             {

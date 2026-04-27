@@ -15,14 +15,14 @@ namespace WebApplications.Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<List<Customer>> GetAllCustomersAsync()
+        public Task<List<Customer>> GetAllCustomersAsync()
         {
-            return await _context.Customers.ToListAsync();
+            return _context.Customers.ToListAsync();
         }
 
-        public async Task<Customer?> GetCustomerByIdAsync(long id)
+        public Task<Customer?> GetCustomerByIdAsync(long id)
         {
-            return await _context.Customers.FindAsync(id);
+            return _context.Customers.FindAsync(id).AsTask();
         }
 
         public async Task<object?> GetCustomerDetailsWithHistoryAsync(long id)
@@ -37,7 +37,9 @@ namespace WebApplications.Infrastructure.Repositories
                     c.Email,
                     Vehicles = _context.Vehicles.Where(v => v.CustomerId == c.Id).ToList(),
                     Invoices = _context.SalesInvoices.Where(i => i.CustomerId == c.Id).ToList(),
-                    Appointments = _context.ServiceAppointments.Where(a => a.CustomerId == c.Id).ToList()
+                    Appointments = _context.ServiceAppointments.Where(a => a.CustomerId == c.Id).ToList(),
+                    PartRequests = _context.PartRequests.Where(p => p.CustomerId == c.Id).ToList(),
+                    Reviews = _context.ServiceReviews.Where(r => r.CustomerId == c.Id).ToList()
                 })
                 .FirstOrDefaultAsync();
         }
@@ -65,54 +67,6 @@ namespace WebApplications.Infrastructure.Repositories
             await _context.SaveChangesAsync();
 
             return customer;
-        }
-
-        public async Task<ServiceAppointment> CreateAppointmentAsync(CreateAppointmentDto dto)
-        {
-            var appointment = new ServiceAppointment
-            {
-                CustomerId = dto.CustomerId,
-                AppointmentDate = DateTime.SpecifyKind(dto.AppointmentDate, DateTimeKind.Utc),
-                ServiceType = dto.ServiceType,
-                Status = "Pending"
-            };
-
-            _context.ServiceAppointments.Add(appointment);
-            await _context.SaveChangesAsync();
-
-            return appointment;
-        }
-
-        public async Task<PartRequest> CreatePartRequestAsync(CreatePartRequestDto dto)
-        {
-            var request = new PartRequest
-            {
-                CustomerId = dto.CustomerId,
-                RequestedPartName = dto.RequestedPartName,
-                VehicleInfo = dto.VehicleInfo,
-                Status = "Pending"
-            };
-
-            _context.PartRequests.Add(request);
-            await _context.SaveChangesAsync();
-
-            return request;
-        }
-
-        public async Task<ServiceReview> CreateReviewAsync(CreateReviewDto dto)
-        {
-            var review = new ServiceReview
-            {
-                CustomerId = dto.CustomerId,
-                Rating = dto.Rating,
-                Comment = dto.Comment,
-                ReviewDate = DateTime.UtcNow
-            };
-
-            _context.ServiceReviews.Add(review);
-            await _context.SaveChangesAsync();
-
-            return review;
         }
     }
 }

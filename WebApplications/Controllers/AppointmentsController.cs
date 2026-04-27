@@ -8,17 +8,17 @@ namespace WebApplications.Controllers
     [ApiController]
     public class AppointmentsController : ControllerBase
     {
-        private readonly ICustomerService _customerService;
+        private readonly IAppointmentService _appointmentService;
 
-        public AppointmentsController(ICustomerService customerService)
+        public AppointmentsController(IAppointmentService appointmentService)
         {
-            _customerService = customerService;
+            _appointmentService = appointmentService;
         }
 
         [HttpPost]
         public async Task<IActionResult> CreateAppointment(CreateAppointmentDto dto)
         {
-            var result = await _customerService.CreateAppointmentAsync(dto);
+            var result = await _appointmentService.CreateAppointmentAsync(dto);
 
             return Ok(new
             {
