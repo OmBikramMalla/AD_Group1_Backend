@@ -38,6 +38,9 @@ builder.Services.AddScoped<IReviewService, ReviewService>();
 builder.Services.AddScoped<ICustomerHistoryRepository, CustomerHistoryRepository>();
 builder.Services.AddScoped<ICustomerHistoryService, CustomerHistoryService>();
 
+builder.Services.AddScoped<IReportRepository, ReportRepository>();
+builder.Services.AddScoped<IReportService, ReportService>();
+
 // Identity
 builder.Services.AddIdentity<Users, Roles>()
     .AddEntityFrameworkStores<AppDbContext>()
