@@ -22,7 +22,7 @@ namespace WebApplications.Infrastructure.Presistance
         public DbSet<ServiceAppointment> ServiceAppointments { get; set; }
         public DbSet<ServiceReview> ServiceReviews { get; set; }
         public DbSet<PartRequest> PartRequests { get; set; }
-
+        public DbSet<Vendor> Vendors { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
