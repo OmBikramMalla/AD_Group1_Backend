@@ -9,5 +9,6 @@ namespace WebApplications.Application.Interfaces.IRepositories
         Task<Customer?> GetCustomerByIdAsync(long id);
         Task<object?> GetCustomerDetailsWithHistoryAsync(long id);
         Task<Customer> RegisterCustomerWithVehicleAsync(RegisterCustomerDto dto);
+        Task<object> SearchCustomersAsync(string query);
     }
 }

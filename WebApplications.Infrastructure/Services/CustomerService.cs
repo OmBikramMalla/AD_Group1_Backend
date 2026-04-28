@@ -33,5 +33,10 @@ namespace WebApplications.Infrastructure.Services
         {
             return _customerRepository.RegisterCustomerWithVehicleAsync(dto);
         }
+
+        public Task<object> SearchCustomersAsync(string query)
+        {
+            return _customerRepository.SearchCustomersAsync(query);
+        }
     }
 }

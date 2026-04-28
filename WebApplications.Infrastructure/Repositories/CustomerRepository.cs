@@ -68,5 +68,37 @@ namespace WebApplications.Infrastructure.Repositories
 
             return customer;
         }
+        public async Task<object> SearchCustomersAsync(string query)
+        {
+            query = query.Trim().ToLower();
+
+            var customers = await _context.Customers
+                .Include(c => c.Vehicles)
+                .Where(c =>
+                    c.Id.ToString().Contains(query) ||
+                    c.FullName.ToLower().Contains(query) ||
+                    c.Phone.ToLower().Contains(query) ||
+                    c.Email.ToLower().Contains(query) ||
+                    c.Vehicles.Any(v => v.VehicleNumber.ToLower().Contains(query))
+                )
+                .OrderBy(c => c.FullName)
+                .Select(c => new
+                {
+                    c.Id,
+                    c.FullName,
+                    c.Phone,
+                    c.Email,
+                    Vehicles = c.Vehicles.Select(v => new
+                    {
+                        v.Id,
+                        v.VehicleNumber,
+                        v.VehicleModel,
+                        v.VehicleBrand
+                    }).ToList()
+                })
+                .ToListAsync();
+
+            return customers;
+        }
     }
 }
