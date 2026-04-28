@@ -1,9 +1,10 @@
+using WebApplications.Application.DTOs;
 using WebApplications.Domain.Models;
 
 namespace WebApplications.Application.Interfaces.IRepositories
 {
     public interface IPartRequestRepository
     {
-        Task<PartRequest> CreateAsync(PartRequest partRequest);
+        Task<PartRequest> CreateForCustomerUserIdAsync(CreatePartRequestDto dto, long userId);
     }
 }

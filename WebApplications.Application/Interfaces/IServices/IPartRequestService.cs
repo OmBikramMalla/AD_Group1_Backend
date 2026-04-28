@@ -5,6 +5,6 @@ namespace WebApplications.Application.Interfaces.IServices
 {
     public interface IPartRequestService
     {
-        Task<PartRequest> CreatePartRequestAsync(CreatePartRequestDto dto);
+        Task<PartRequest> CreatePartRequestForUserAsync(CreatePartRequestDto dto, long userId);
     }
 }

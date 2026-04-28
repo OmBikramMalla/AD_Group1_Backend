@@ -14,22 +14,14 @@ namespace WebApplications.Infrastructure.Services
             _reviewRepository = reviewRepository;
         }
 
-        public async Task<ServiceReview> CreateReviewAsync(CreateReviewDto dto)
+        public async Task<ServiceReview> CreateReviewForUserAsync(CreateReviewDto dto, long userId)
         {
             if (dto.Rating < 1 || dto.Rating > 5)
             {
                 throw new ArgumentException("Rating must be between 1 and 5.");
             }
 
-            var review = new ServiceReview
-            {
-                CustomerId = dto.CustomerId,
-                Rating = dto.Rating,
-                Comment = dto.Comment,
-                ReviewDate = DateTime.UtcNow
-            };
-
-            return await _reviewRepository.CreateAsync(review);
+            return await _reviewRepository.CreateForCustomerUserIdAsync(dto, userId);
         }
     }
 }

@@ -5,6 +5,6 @@ namespace WebApplications.Application.Interfaces.IServices
 {
     public interface IReviewService
     {
-        Task<ServiceReview> CreateReviewAsync(CreateReviewDto dto);
+        Task<ServiceReview> CreateReviewForUserAsync(CreateReviewDto dto, long userId);
     }
 }

@@ -28,6 +28,19 @@ namespace WebApplications.Infrastructure.Presistance
         {
             base.OnModelCreating(modelBuilder);
 
+            modelBuilder.Entity<Customer>()
+     .HasOne(c => c.User)
+     .WithOne()
+     .HasForeignKey<Customer>(c => c.UserId)
+     .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Customer>()
+                .HasIndex(c => c.UserId)
+                .IsUnique();
+
+            modelBuilder.Entity<Customer>()
+                .HasIndex(c => c.Email)
+                .IsUnique();
 
             modelBuilder.Entity<Roles>().HasData(
     new Roles { Id = 1, Name = "Admin", ConcurrencyStamp = "admin-fixed" },

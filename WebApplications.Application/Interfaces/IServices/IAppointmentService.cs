@@ -5,6 +5,7 @@ namespace WebApplications.Application.Interfaces.IServices
 {
     public interface IAppointmentService
     {
-        Task<ServiceAppointment> CreateAppointmentAsync(CreateAppointmentDto dto);
+
+        Task<ServiceAppointment> CreateAppointmentForUserAsync(CreateAppointmentDto dto, long userId);
     }
 }

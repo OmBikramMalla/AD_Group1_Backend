@@ -14,9 +14,9 @@ namespace WebApplications.Infrastructure.Services
             _appointmentRepository = appointmentRepository;
         }
 
-        public Task<ServiceAppointment> CreateAppointmentAsync(CreateAppointmentDto dto)
+        public async Task<ServiceAppointment> CreateAppointmentForUserAsync(CreateAppointmentDto dto, long userId)
         {
-            return _appointmentRepository.CreateAppointmentAsync(dto);
+            return await _appointmentRepository.CreateForCustomerUserIdAsync(dto, userId);
         }
     }
 }

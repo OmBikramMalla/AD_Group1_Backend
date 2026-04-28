@@ -1,7 +1,8 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using WebApplications.Application.DTOs;
 using WebApplications.Application.Interfaces.IServices;
-using Microsoft.AspNetCore.Authorization;
 
 namespace WebApplications.Controllers
 {
@@ -20,9 +21,16 @@ namespace WebApplications.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateReview(CreateReviewDto dto)
         {
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (string.IsNullOrWhiteSpace(userIdClaim))
+                return Unauthorized(new { message = "Invalid token." });
+
+            var userId = long.Parse(userIdClaim);
+
             try
             {
-                var result = await _reviewService.CreateReviewAsync(dto);
+                var result = await _reviewService.CreateReviewForUserAsync(dto, userId);
 
                 return Ok(new
                 {

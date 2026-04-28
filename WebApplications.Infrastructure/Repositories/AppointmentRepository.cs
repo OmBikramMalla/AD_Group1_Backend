@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using WebApplications.Application.DTOs;
 using WebApplications.Application.Interfaces.IRepositories;
 using WebApplications.Domain.Models;
@@ -14,12 +15,18 @@ namespace WebApplications.Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<ServiceAppointment> CreateAppointmentAsync(CreateAppointmentDto dto)
+        public async Task<ServiceAppointment> CreateForCustomerUserIdAsync(CreateAppointmentDto dto, long userId)
         {
+            var customer = await _context.Customers
+                .FirstOrDefaultAsync(c => c.UserId == userId);
+
+            if (customer == null)
+                throw new Exception("Customer profile not found for logged-in user.");
+
             var appointment = new ServiceAppointment
             {
-                CustomerId = dto.CustomerId,
-                AppointmentDate = DateTime.SpecifyKind(dto.AppointmentDate, DateTimeKind.Utc),
+                CustomerId = customer.Id,
+                AppointmentDate = dto.AppointmentDate,
                 ServiceType = dto.ServiceType,
                 Status = "Pending"
             };

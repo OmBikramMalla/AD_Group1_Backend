@@ -14,17 +14,9 @@ namespace WebApplications.Infrastructure.Services
             _partRequestRepository = partRequestRepository;
         }
 
-        public async Task<PartRequest> CreatePartRequestAsync(CreatePartRequestDto dto)
+        public async Task<PartRequest> CreatePartRequestForUserAsync(CreatePartRequestDto dto, long userId)
         {
-            var partRequest = new PartRequest
-            {
-                CustomerId = dto.CustomerId,
-                RequestedPartName = dto.RequestedPartName,
-                VehicleInfo = dto.VehicleInfo,
-                Status = "Pending"
-            };
-
-            return await _partRequestRepository.CreateAsync(partRequest);
+            return await _partRequestRepository.CreateForCustomerUserIdAsync(dto, userId);
         }
     }
 }

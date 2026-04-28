@@ -1,7 +1,8 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using WebApplications.Application.DTOs;
 using WebApplications.Application.Interfaces.IServices;
-using Microsoft.AspNetCore.Authorization;
 
 namespace WebApplications.Controllers
 {
@@ -20,11 +21,18 @@ namespace WebApplications.Controllers
         [HttpPost]
         public async Task<IActionResult> CreatePartRequest(CreatePartRequestDto dto)
         {
-            var result = await _partRequestService.CreatePartRequestAsync(dto);
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (string.IsNullOrWhiteSpace(userIdClaim))
+                return Unauthorized(new { message = "Invalid token." });
+
+            var userId = long.Parse(userIdClaim);
+
+            var result = await _partRequestService.CreatePartRequestForUserAsync(dto, userId);
 
             return Ok(new
             {
-                message = "Part request created",
+                message = "Part request created successfully",
                 request = result
             });
         }
