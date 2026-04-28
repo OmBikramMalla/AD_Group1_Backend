@@ -32,7 +32,8 @@ namespace WebApplications.Infrastructure.Presistance
      .HasOne(c => c.User)
      .WithOne()
      .HasForeignKey<Customer>(c => c.UserId)
-     .OnDelete(DeleteBehavior.Cascade);
+
+     .OnDelete(DeleteBehavior.SetNull);
 
             modelBuilder.Entity<Customer>()
                 .HasIndex(c => c.UserId)
