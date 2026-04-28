@@ -22,5 +22,14 @@ namespace WebApplications.Infrastructure.Repositories
 				.Include(c => c.ServiceReviews)
 				.FirstOrDefaultAsync(c => c.Id == customerId);
 		}
+
+		public async Task<Customer?> GetCustomerHistoryByEmailAsync(string email)
+		{
+			return await _context.Customers
+				.Include(c => c.SalesInvoices)
+				.Include(c => c.ServiceAppointments)
+				.Include(c => c.ServiceReviews)
+				.FirstOrDefaultAsync(c => c.Email == email);
+		}
 	}
 }

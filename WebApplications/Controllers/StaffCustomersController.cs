@@ -1,8 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
 using WebApplications.Application.Interfaces.IServices;
+using Microsoft.AspNetCore.Authorization;
 
 namespace WebApplications.Controllers
 {
+    [Authorize(Roles = "Staff")]
     [Route("api/staff/customers")]
     [ApiController]
     public class StaffCustomersController : ControllerBase

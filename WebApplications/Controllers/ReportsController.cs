@@ -1,8 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
 using WebApplications.Application.Interfaces.IServices;
+using Microsoft.AspNetCore.Authorization;
 
 namespace WebApplications.Controllers
 {
+    [Authorize(Roles="Staff")]
     [Route("api/staff/reports")]
     [ApiController]
     public class ReportsController : ControllerBase
