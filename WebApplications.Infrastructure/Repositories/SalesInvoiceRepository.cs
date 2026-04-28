@@ -68,5 +68,13 @@ namespace WebApplications.Infrastructure.Repositories
 
             return invoice;
         }
+        public async Task<SalesInvoice?> GetInvoiceWithDetailsAsync(long id)
+        {
+            return await _context.SalesInvoices
+                .Include(i => i.Customer)
+                .Include(i => i.Items)
+                    .ThenInclude(item => item.Part)
+                .FirstOrDefaultAsync(i => i.Id == id);
+        }
     }
 }

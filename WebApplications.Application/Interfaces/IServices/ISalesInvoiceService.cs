@@ -6,5 +6,6 @@ namespace WebApplications.Application.Interfaces.IServices
     public interface ISalesInvoiceService
     {
         Task<SalesInvoice> CreateAsync(CreateSalesInvoiceDto dto);
+        Task<bool> SendInvoiceEmailAsync(long invoiceId);
     }
 }

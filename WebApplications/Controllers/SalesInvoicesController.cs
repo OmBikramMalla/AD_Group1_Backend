@@ -38,5 +38,22 @@ namespace WebApplications.Controllers
                 return BadRequest(new { message = ex.Message });
             }
         }
+        [HttpPost("{id}/send-email")]
+        public async Task<IActionResult> SendEmail(long id)
+        {
+            try
+            {
+                await _salesInvoiceService.SendInvoiceEmailAsync(id);
+
+                return Ok(new
+                {
+                    message = "Invoice email sent successfully."
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
     }
 }

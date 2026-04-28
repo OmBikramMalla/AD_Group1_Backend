@@ -51,6 +51,8 @@ builder.Services.AddScoped<IVendorService, VendorService>();
 builder.Services.AddScoped<ISalesInvoiceRepository, SalesInvoiceRepository>();
 builder.Services.AddScoped<ISalesInvoiceService, SalesInvoiceService>();
 
+builder.Services.AddScoped<IEmailService, EmailService>();
+
 // Identity
 builder.Services.AddIdentity<Users, Roles>(options =>
 {
