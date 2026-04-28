@@ -20,21 +20,32 @@ namespace WebApplications.Infrastructure.Helpers
         {
             var claims = new[]
             {
-                new Claim(ClaimTypes.Name, user.Email ?? ""),
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new Claim(ClaimTypes.Name, user.UserName ?? ""),
+                new Claim(ClaimTypes.Email, user.Email ?? ""),
                 new Claim(ClaimTypes.Role, role)
             };
 
+            var jwtKey = _config["Jwt:Key"];
+
+            if (string.IsNullOrWhiteSpace(jwtKey))
+            {
+                throw new Exception("JWT key is missing in appsettings.json");
+            }
+
             var key = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(_config["Jwt:Key"] ?? "temporary-development-key-123456789")
+                Encoding.UTF8.GetBytes(jwtKey)
             );
 
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+            var expiryMinutes = Convert.ToDouble(_config["Jwt:ExpiryMinutes"] ?? "180");
 
             var token = new JwtSecurityToken(
                 issuer: _config["Jwt:Issuer"],
                 audience: _config["Jwt:Audience"],
                 claims: claims,
-                expires: DateTime.Now.AddHours(3),
+                expires: DateTime.UtcNow.AddMinutes(expiryMinutes),
                 signingCredentials: creds
             );
 

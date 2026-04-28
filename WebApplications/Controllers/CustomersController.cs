@@ -1,9 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
 using WebApplications.Application.DTOs;
 using WebApplications.Application.Interfaces.IServices;
+using Microsoft.AspNetCore.Authorization;
 
 namespace WebApplications.Controllers
 {
+    [Authorize(Roles = "Staff")]
     [Route("api/customers")]
     [ApiController]
     public class CustomersController : ControllerBase
@@ -37,6 +39,17 @@ namespace WebApplications.Controllers
                 customer.Phone,
                 customer.Email
             });
+        }
+
+        [HttpGet("search")]
+        public async Task<IActionResult> SearchCustomers([FromQuery] string query)
+        {
+            if (string.IsNullOrWhiteSpace(query))
+                return BadRequest(new { message = "Search query is required." });
+
+            var customers = await _customerService.SearchCustomersAsync(query);
+
+            return Ok(customers);
         }
     }
 }

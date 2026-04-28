@@ -1,72 +1,42 @@
-using Microsoft.EntityFrameworkCore;
+using WebApplications.Application.DTOs;
+using WebApplications.Application.Interfaces.IRepositories;
 using WebApplications.Application.Interfaces.IServices;
 using WebApplications.Domain.Models;
-using WebApplications.Infrastructure.Presistance;
-using WebApplications.Application.DTOs;
 
 namespace WebApplications.Infrastructure.Services
 {
     public class CustomerService : ICustomerService
     {
-        private readonly AppDbContext _context;
+        private readonly ICustomerRepository _customerRepository;
 
-        public CustomerService(AppDbContext context)
+        public CustomerService(ICustomerRepository customerRepository)
         {
-            _context = context;
+            _customerRepository = customerRepository;
         }
 
-        public async Task<List<Customer>> GetAllCustomersAsync()
+        public Task<List<Customer>> GetAllCustomersAsync()
         {
-            return await _context.Customers.ToListAsync();
+            return _customerRepository.GetAllCustomersAsync();
         }
 
-        public async Task<Customer?> GetCustomerByIdAsync(long id)
+        public Task<Customer?> GetCustomerByIdAsync(long id)
         {
-            return await _context.Customers.FindAsync(id);
+            return _customerRepository.GetCustomerByIdAsync(id);
         }
 
-        public async Task<object?> GetCustomerDetailsWithHistoryAsync(long id)
+        public Task<object?> GetCustomerDetailsWithHistoryAsync(long id)
         {
-            var customer = await _context.Customers
-                .Where(c => c.Id == id)
-                .Select(c => new
-                {
-                    c.Id,
-                    c.FullName,
-                    c.Phone,
-                    c.Email,
-                    Vehicles = _context.Vehicles.Where(v => v.CustomerId == c.Id).ToList(),
-                    Invoices = _context.SalesInvoices.Where(i => i.CustomerId == c.Id).ToList(),
-                    Appointments = _context.ServiceAppointments.Where(a => a.CustomerId == c.Id).ToList()
-                })
-                .FirstOrDefaultAsync();
-
-            return customer;
+            return _customerRepository.GetCustomerDetailsWithHistoryAsync(id);
         }
 
-        public async Task<Customer> RegisterCustomerWithVehicleAsync(RegisterCustomerDto dto)
+        public Task<Customer> RegisterCustomerWithVehicleAsync(RegisterCustomerDto dto)
         {
-            var customer = new Customer
-            {
-                FullName = dto.FullName,
-                Phone = dto.Phone,
-                Email = dto.Email
-            };
+            return _customerRepository.RegisterCustomerWithVehicleAsync(dto);
+        }
 
-            var vehicle = new Vehicle
-            {
-                VehicleNumber = dto.VehicleNumber,
-                VehicleModel = dto.VehicleModel,
-                VehicleBrand = dto.VehicleBrand,
-                Customer = customer
-            };
-
-            _context.Customers.Add(customer);
-            _context.Vehicles.Add(vehicle);
-
-            await _context.SaveChangesAsync();
-
-            return customer;
+        public Task<object> SearchCustomersAsync(string query)
+        {
+            return _customerRepository.SearchCustomersAsync(query);
         }
     }
 }

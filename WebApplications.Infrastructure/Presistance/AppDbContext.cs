@@ -22,7 +22,7 @@ namespace WebApplications.Infrastructure.Presistance
         public DbSet<ServiceAppointment> ServiceAppointments { get; set; }
         public DbSet<ServiceReview> ServiceReviews { get; set; }
         public DbSet<PartRequest> PartRequests { get; set; }
-
+        public DbSet<Vendor> Vendors { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -32,6 +32,7 @@ namespace WebApplications.Infrastructure.Presistance
      .HasOne(c => c.User)
      .WithOne()
      .HasForeignKey<Customer>(c => c.UserId)
+
      .OnDelete(DeleteBehavior.SetNull);
 
             modelBuilder.Entity<Customer>()
@@ -41,7 +42,6 @@ namespace WebApplications.Infrastructure.Presistance
             modelBuilder.Entity<Customer>()
                 .HasIndex(c => c.Email)
                 .IsUnique();
-
 
             modelBuilder.Entity<Roles>().HasData(
     new Roles { Id = 1, Name = "Admin", ConcurrencyStamp = "admin-fixed" },

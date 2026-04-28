@@ -7,19 +7,26 @@ using WebApplications.Domain.Models;
 using WebApplications.Infrastructure.Helpers;
 using WebApplications.Infrastructure.Presistance;
 using WebApplications.Infrastructure.Services;
+using WebApplications.Application.Interfaces.IRepositories;
+using WebApplications.Infrastructure.Repositories;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Controllers + OpenAPI
+// Controllers + Swagger
 builder.Services.AddControllers();
-builder.Services.AddOpenApi();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 // Database
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("defaultConnection"))
 );
 
-// Customer Feature Services
+builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
 builder.Services.AddScoped<ICustomerService, CustomerService>();
 
 
@@ -45,9 +52,39 @@ builder.Services.AddScoped<ISalesInvoiceRepository, SalesInvoiceRepository>();
 builder.Services.AddScoped<ISalesInvoiceService, SalesInvoiceService>();
 
 // Identity
-builder.Services.AddIdentity<Users, Roles>()
-    .AddEntityFrameworkStores<AppDbContext>()
-    .AddDefaultTokenProviders();
+builder.Services.AddIdentity<Users, Roles>(options =>
+{
+    options.User.RequireUniqueEmail = true;
+})
+.AddEntityFrameworkStores<AppDbContext>()
+.AddDefaultTokenProviders();
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    var key = builder.Configuration["Jwt:Key"];
+
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+
+        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+        ValidAudience = builder.Configuration["Jwt:Audience"],
+
+        IssuerSigningKey = new SymmetricSecurityKey(
+            Encoding.UTF8.GetBytes(key!)
+        )
+    };
+});
+
+
 
 // JWT Helper
 builder.Services.AddScoped<JwtHelper>();
@@ -56,16 +93,26 @@ builder.Services.AddScoped<JwtHelper>();
 builder.Host.UseSerilog((context, configuration) =>
     configuration.ReadFrom.Configuration(context.Configuration));
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend", policy =>
+    {
+        policy.WithOrigins("http://localhost:5173")
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
+
 var app = builder.Build();
+
+app.UseCors("AllowFrontend");
 
 // Exception Middleware
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 
-// OpenAPI
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();
-}
+app.UseSwagger();
+app.UseSwaggerUI();
+
 
 // Pipeline
 app.UseHttpsRedirection();

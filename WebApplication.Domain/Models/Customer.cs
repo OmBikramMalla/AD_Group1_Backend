@@ -3,6 +3,10 @@ namespace WebApplications.Domain.Models
     public class Customer
     {
         public long Id { get; set; }
+
+        public long? UserId { get; set; }
+        public Users? User { get; set; }
+
         public string FullName { get; set; } = string.Empty;
         public string Phone { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
