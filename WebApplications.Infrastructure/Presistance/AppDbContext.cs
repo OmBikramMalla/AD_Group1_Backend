@@ -1,8 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using WebApplications.Domain.Models;
 
 namespace WebApplications.Infrastructure.Presistance
@@ -11,7 +8,6 @@ namespace WebApplications.Infrastructure.Presistance
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
-
         }
 
         public DbSet<Customer> Customers { get; set; }
@@ -29,11 +25,10 @@ namespace WebApplications.Infrastructure.Presistance
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.Entity<Customer>()
-     .HasOne(c => c.User)
-     .WithOne()
-     .HasForeignKey<Customer>(c => c.UserId)
-
-     .OnDelete(DeleteBehavior.SetNull);
+                .HasOne(c => c.User)
+                .WithOne()
+                .HasForeignKey<Customer>(c => c.UserId)
+                .OnDelete(DeleteBehavior.SetNull);
 
             modelBuilder.Entity<Customer>()
                 .HasIndex(c => c.UserId)
@@ -44,12 +39,10 @@ namespace WebApplications.Infrastructure.Presistance
                 .IsUnique();
 
             modelBuilder.Entity<Roles>().HasData(
-    new Roles { Id = 1, Name = "Admin", ConcurrencyStamp = "admin-fixed" },
-    new Roles { Id = 2, Name = "Staff", ConcurrencyStamp = "staff-fixed" },
-    new Roles { Id = 3, Name = "Customer", ConcurrencyStamp = "customer-fixed" }
-);
+                new Roles { Id = 1, Name = "Admin", ConcurrencyStamp = "admin-fixed" },
+                new Roles { Id = 2, Name = "Staff", ConcurrencyStamp = "staff-fixed" },
+                new Roles { Id = 3, Name = "Customer", ConcurrencyStamp = "customer-fixed" }
+            );
         }
-
     }
-
 }
