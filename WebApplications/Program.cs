@@ -22,6 +22,28 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 // Customer Feature Services
 builder.Services.AddScoped<ICustomerService, CustomerService>();
 
+
+builder.Services.AddScoped<IAppointmentRepository, AppointmentRepository>();
+builder.Services.AddScoped<IAppointmentService, AppointmentService>();
+
+builder.Services.AddScoped<IPartRequestRepository, PartRequestRepository>();
+builder.Services.AddScoped<IPartRequestService, PartRequestService>();
+
+builder.Services.AddScoped<IReviewRepository, ReviewRepository>();
+builder.Services.AddScoped<IReviewService, ReviewService>();
+
+builder.Services.AddScoped<ICustomerHistoryRepository, CustomerHistoryRepository>();
+builder.Services.AddScoped<ICustomerHistoryService, CustomerHistoryService>();
+
+builder.Services.AddScoped<IReportRepository, ReportRepository>();
+builder.Services.AddScoped<IReportService, ReportService>();
+
+builder.Services.AddScoped<IVendorRepository, VendorRepository>();
+builder.Services.AddScoped<IVendorService, VendorService>();
+
+builder.Services.AddScoped<ISalesInvoiceRepository, SalesInvoiceRepository>();
+builder.Services.AddScoped<ISalesInvoiceService, SalesInvoiceService>();
+
 // Identity
 builder.Services.AddIdentity<Users, Roles>()
     .AddEntityFrameworkStores<AppDbContext>()
