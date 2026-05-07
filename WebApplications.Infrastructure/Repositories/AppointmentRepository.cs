@@ -23,11 +23,21 @@ namespace WebApplications.Infrastructure.Repositories
             if (customer == null)
                 throw new Exception("Customer profile not found for logged-in user.");
 
+            var vehicle = await _context.Vehicles
+                .FirstOrDefaultAsync(v =>
+                    v.Id == dto.VehicleId &&
+                    v.CustomerId == customer.Id);
+
+            if (vehicle == null)
+                throw new Exception("Selected vehicle not found for this customer.");
+
             var appointment = new ServiceAppointment
             {
                 CustomerId = customer.Id,
+                VehicleId = dto.VehicleId,
                 AppointmentDate = dto.AppointmentDate,
                 ServiceType = dto.ServiceType,
+                Description = dto.Description,
                 Status = "Pending"
             };
 
@@ -36,6 +46,7 @@ namespace WebApplications.Infrastructure.Repositories
 
             return appointment;
         }
+
         public async Task<List<ServiceAppointment>> GetByCustomerUserIdAsync(long userId)
         {
             var customer = await _context.Customers
