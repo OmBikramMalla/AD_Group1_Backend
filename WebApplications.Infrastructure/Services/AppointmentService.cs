@@ -18,5 +18,10 @@ namespace WebApplications.Infrastructure.Services
         {
             return await _appointmentRepository.CreateForCustomerUserIdAsync(dto, userId);
         }
+
+        public Task<List<ServiceAppointment>> GetMyAppointmentsAsync(long userId)
+        {
+            return _appointmentRepository.GetByCustomerUserIdAsync(userId);
+        }
     }
 }

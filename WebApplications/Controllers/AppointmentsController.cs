@@ -36,5 +36,20 @@ namespace WebApplications.Controllers
                 appointment = result
             });
         }
+
+        [HttpGet("my")]
+        public async Task<IActionResult> GetMyAppointments()
+        {
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (string.IsNullOrWhiteSpace(userIdClaim))
+                return Unauthorized(new { message = "Invalid token." });
+
+            var userId = long.Parse(userIdClaim);
+
+            var appointments = await _appointmentService.GetMyAppointmentsAsync(userId);
+
+            return Ok(appointments);
+        }
     }
 }

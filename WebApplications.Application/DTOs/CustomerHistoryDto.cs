@@ -35,5 +35,9 @@ namespace WebApplications.Application.DTOs
         public int Rating { get; set; }
         public string Comment { get; set; } = string.Empty;
         public DateTime ReviewDate { get; set; }
+
+        public long ServiceAppointmentId { get; set; }
+        public string ServiceType { get; set; } = string.Empty;
+        public DateTime? AppointmentDate { get; set; }
     }
 }
