@@ -76,5 +76,47 @@ namespace WebApplications.Infrastructure.Repositories
                     .ThenInclude(item => item.Part)
                 .FirstOrDefaultAsync(i => i.Id == id);
         }
+
+        public async Task<object> GetRecentInvoicesAsync()
+        {
+            return await _context.SalesInvoices
+                .Include(i => i.Customer)
+                .OrderByDescending(i => i.InvoiceDate)
+                .Take(5)
+                .Select(i => new
+                {
+                    i.Id,
+                    i.InvoiceDate,
+                    i.TotalAmount,
+                    i.PaidAmount,
+                    DueAmount = i.TotalAmount - i.PaidAmount,
+                    CustomerId = i.CustomerId,
+                    CustomerName = i.Customer != null ? i.Customer.FullName : "Unknown",
+                    Status = (i.TotalAmount - i.PaidAmount) > 0 ? "Unpaid" : "Completed"
+                })
+                .ToListAsync();
+        }
+
+        public async Task<object> GetSalesSummaryAsync()
+        {
+            var today = DateTime.UtcNow.Date;
+
+            var invoices = await _context.SalesInvoices
+                .AsNoTracking()
+                .ToListAsync();
+
+            var todayInvoices = invoices
+                .Where(i => i.InvoiceDate.Date == today)
+                .ToList();
+
+            return new
+            {
+                TodaySales = todayInvoices.Sum(i => i.PaidAmount),
+                TodayTransactions = todayInvoices.Count,
+                TotalInvoices = invoices.Count,
+                PendingInvoices = invoices.Count(i => (i.TotalAmount - i.PaidAmount) > 0),
+                TotalPendingAmount = invoices.Sum(i => i.TotalAmount - i.PaidAmount)
+            };
+        }
     }
 }

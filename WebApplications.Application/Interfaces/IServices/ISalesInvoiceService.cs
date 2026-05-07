@@ -7,5 +7,8 @@ namespace WebApplications.Application.Interfaces.IServices
     {
         Task<SalesInvoice> CreateAsync(CreateSalesInvoiceDto dto);
         Task<bool> SendInvoiceEmailAsync(long invoiceId);
+
+        Task<object> GetRecentInvoicesAsync();
+        Task<object> GetSalesSummaryAsync();
     }
 }
