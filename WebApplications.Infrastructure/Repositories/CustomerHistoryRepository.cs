@@ -19,6 +19,7 @@ namespace WebApplications.Infrastructure.Repositories
             return await _context.Customers
                 .Include(c => c.SalesInvoices)
                 .Include(c => c.ServiceAppointments)
+                    .ThenInclude(a => a.Vehicle)
                 .Include(c => c.ServiceReviews)
                     .ThenInclude(r => r.ServiceAppointment)
                 .FirstOrDefaultAsync(c => c.UserId == userId);

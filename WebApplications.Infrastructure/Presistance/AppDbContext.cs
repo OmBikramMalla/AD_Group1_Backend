@@ -38,6 +38,30 @@ namespace WebApplications.Infrastructure.Presistance
                 .HasIndex(c => c.Email)
                 .IsUnique();
 
+            modelBuilder.Entity<ServiceAppointment>()
+                .HasOne(a => a.Customer)
+                .WithMany(c => c.ServiceAppointments)
+                .HasForeignKey(a => a.CustomerId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<ServiceAppointment>()
+                .HasOne(a => a.Vehicle)
+                .WithMany()
+                .HasForeignKey(a => a.VehicleId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<ServiceReview>()
+                .HasOne(r => r.Customer)
+                .WithMany(c => c.ServiceReviews)
+                .HasForeignKey(r => r.CustomerId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<ServiceReview>()
+                .HasOne(r => r.ServiceAppointment)
+                .WithMany(a => a.Reviews)
+                .HasForeignKey(r => r.ServiceAppointmentId)
+                .OnDelete(DeleteBehavior.Restrict);
+
             modelBuilder.Entity<Roles>().HasData(
                 new Roles { Id = 1, Name = "Admin", ConcurrencyStamp = "admin-fixed" },
                 new Roles { Id = 2, Name = "Staff", ConcurrencyStamp = "staff-fixed" },

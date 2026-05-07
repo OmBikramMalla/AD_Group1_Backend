@@ -24,9 +24,18 @@ namespace WebApplications.Application.DTOs
     public class ServiceHistoryDto
     {
         public long AppointmentId { get; set; }
+
         public DateTime AppointmentDate { get; set; }
+
         public string ServiceType { get; set; } = string.Empty;
+
+        public string Description { get; set; } = string.Empty;
+
         public string Status { get; set; } = string.Empty;
+
+        public string VehicleName { get; set; } = string.Empty;
+
+        public string VehicleNumber { get; set; } = string.Empty;
     }
 
     public class ReviewHistoryDto
