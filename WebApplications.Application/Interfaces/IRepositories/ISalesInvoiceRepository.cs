@@ -7,5 +7,8 @@ namespace WebApplications.Application.Interfaces.IRepositories
     {
         Task<SalesInvoice> CreateAsync(CreateSalesInvoiceDto dto);
         Task<SalesInvoice?> GetInvoiceWithDetailsAsync(long id);
+
+        Task<object> GetRecentInvoicesAsync();
+        Task<object> GetSalesSummaryAsync();
     }
 }

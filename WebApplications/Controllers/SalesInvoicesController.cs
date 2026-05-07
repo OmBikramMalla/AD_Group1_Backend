@@ -55,5 +55,18 @@ namespace WebApplications.Controllers
                 return BadRequest(new { message = ex.Message });
             }
         }
+        [HttpGet("recent")]
+        public async Task<IActionResult> GetRecentInvoices()
+        {
+            var result = await _salesInvoiceService.GetRecentInvoicesAsync();
+            return Ok(result);
+        }
+
+        [HttpGet("summary")]
+        public async Task<IActionResult> GetSalesSummary()
+        {
+            var result = await _salesInvoiceService.GetSalesSummaryAsync();
+            return Ok(result);
+        }
     }
 }
