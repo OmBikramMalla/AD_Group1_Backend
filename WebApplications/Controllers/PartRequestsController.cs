@@ -26,15 +26,38 @@ namespace WebApplications.Controllers
             if (string.IsNullOrWhiteSpace(userIdClaim))
                 return Unauthorized(new { message = "Invalid token." });
 
-            var userId = long.Parse(userIdClaim);
+            if (!long.TryParse(userIdClaim, out var userId))
+                return Unauthorized(new { message = "Invalid user id in token." });
 
-            var result = await _partRequestService.CreatePartRequestForUserAsync(dto, userId);
-
-            return Ok(new
+            try
             {
-                message = "Part request created successfully",
-                request = result
-            });
+                var result = await _partRequestService.CreatePartRequestForUserAsync(dto, userId);
+
+                return Ok(new
+                {
+                    message = "Part request created successfully",
+                    request = new
+                    {
+                        id = result.Id,
+                        requestedPartName = result.RequestedPartName,
+                        vehicleInfo = result.VehicleInfo,
+                        status = result.Status,
+                        customerId = result.CustomerId
+                    }
+                });
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    message = ex.Message,
+                    inner = ex.InnerException?.Message
+                });
+            }
         }
     }
 }

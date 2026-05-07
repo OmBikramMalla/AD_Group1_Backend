@@ -21,7 +21,8 @@ namespace WebApplications.Infrastructure.Repositories
                 .FirstOrDefaultAsync(c => c.UserId == userId);
 
             if (customer == null)
-                throw new Exception("Customer profile not found for logged-in user.");
+                throw new ArgumentException("Customer profile not found for logged-in user.");
+           
 
             var vehicle = await _context.Vehicles
                 .FirstOrDefaultAsync(v =>
@@ -29,13 +30,15 @@ namespace WebApplications.Infrastructure.Repositories
                     v.CustomerId == customer.Id);
 
             if (vehicle == null)
-                throw new Exception("Selected vehicle not found for this customer.");
+                throw new ArgumentException("Selected vehicle not found for this customer.");
 
             var appointment = new ServiceAppointment
             {
                 CustomerId = customer.Id,
                 VehicleId = dto.VehicleId,
-                AppointmentDate = dto.AppointmentDate,
+                AppointmentDate = dto.AppointmentDate.Kind == DateTimeKind.Utc
+                ? dto.AppointmentDate
+                : DateTime.SpecifyKind(dto.AppointmentDate, DateTimeKind.Utc),
                 ServiceType = dto.ServiceType,
                 Description = dto.Description,
                 Status = "Pending"

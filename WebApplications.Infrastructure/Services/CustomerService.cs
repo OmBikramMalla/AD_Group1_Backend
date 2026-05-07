@@ -14,7 +14,7 @@ namespace WebApplications.Infrastructure.Services
             _customerRepository = customerRepository;
         }
 
-        public Task<List<Customer>> GetAllCustomersAsync()
+        public Task<object> GetAllCustomersAsync()
         {
             return _customerRepository.GetAllCustomersAsync();
         }

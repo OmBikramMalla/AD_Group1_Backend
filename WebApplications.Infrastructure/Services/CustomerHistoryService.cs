@@ -52,7 +52,16 @@ namespace WebApplications.Infrastructure.Services
                         AppointmentId = a.Id,
                         AppointmentDate = a.AppointmentDate,
                         ServiceType = a.ServiceType,
-                        Status = a.Status
+                        Description = a.Description,
+                        Status = a.Status,
+
+                        VehicleName = a.Vehicle != null
+                            ? $"{a.Vehicle.VehicleBrand} {a.Vehicle.VehicleModel}"
+                            : string.Empty,
+
+                        VehicleNumber = a.Vehicle != null
+                            ? a.Vehicle.VehicleNumber
+                            : string.Empty
                     })
                     .ToList(),
 

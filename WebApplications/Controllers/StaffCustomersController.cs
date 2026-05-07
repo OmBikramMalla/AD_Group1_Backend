@@ -35,5 +35,16 @@ namespace WebApplications.Controllers
 
             return Ok(customer);
         }
+
+        // GET: api/staff/customers/search?query=ram
+        [HttpGet("search")]
+        public async Task<IActionResult> SearchCustomers([FromQuery] string query)
+        {
+            if (string.IsNullOrWhiteSpace(query))
+                return BadRequest(new { message = "Search query is required." });
+
+            var result = await _customerService.SearchCustomersAsync(query);
+            return Ok(result);
+        }
     }
 }
