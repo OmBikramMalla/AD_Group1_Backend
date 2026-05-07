@@ -36,5 +36,18 @@ namespace WebApplications.Infrastructure.Repositories
 
             return appointment;
         }
+        public async Task<List<ServiceAppointment>> GetByCustomerUserIdAsync(long userId)
+        {
+            var customer = await _context.Customers
+                .FirstOrDefaultAsync(c => c.UserId == userId);
+
+            if (customer == null)
+                throw new Exception("Customer profile not found for logged-in user.");
+
+            return await _context.ServiceAppointments
+                .Where(a => a.CustomerId == customer.Id)
+                .OrderByDescending(a => a.AppointmentDate)
+                .ToListAsync();
+        }
     }
 }

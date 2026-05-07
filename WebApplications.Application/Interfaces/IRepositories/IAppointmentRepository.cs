@@ -6,5 +6,6 @@ namespace WebApplications.Application.Interfaces.IRepositories
     public interface IAppointmentRepository
     {
         Task<ServiceAppointment> CreateForCustomerUserIdAsync(CreateAppointmentDto dto, long userId);
+        Task<List<ServiceAppointment>> GetByCustomerUserIdAsync(long userId);
     }
 }

@@ -5,36 +5,34 @@ using WebApplications.Application.Interfaces.IServices;
 
 namespace WebApplications.Controllers
 {
-	[Authorize(Roles = "Customer")]
-	[Route("api/customers")]
-	[ApiController]
-	public class CustomerHistoryController : ControllerBase
-	{
-		private readonly ICustomerHistoryService _customerHistoryService;
+    [Authorize(Roles = "Customer")]
+    [Route("api/customers")]
+    [ApiController]
+    public class CustomerHistoryController : ControllerBase
+    {
+        private readonly ICustomerHistoryService _customerHistoryService;
 
-		public CustomerHistoryController(ICustomerHistoryService customerHistoryService)
-		{
-			_customerHistoryService = customerHistoryService;
-		}
+        public CustomerHistoryController(ICustomerHistoryService customerHistoryService)
+        {
+            _customerHistoryService = customerHistoryService;
+        }
 
-		[HttpGet("my-history")]
-		public async Task<IActionResult> GetMyHistory()
-		{
-			var email = User.FindFirst(ClaimTypes.Email)?.Value;
+        [HttpGet("my-history")]
+        public async Task<IActionResult> GetMyHistory()
+        {
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-			if (string.IsNullOrWhiteSpace(email))
-			{
-				return Unauthorized(new { message = "Invalid token." });
-			}
+            if (string.IsNullOrWhiteSpace(userIdClaim))
+                return Unauthorized(new { message = "Invalid token." });
 
-			var result = await _customerHistoryService.GetCustomerHistoryByEmailAsync(email);
+            var userId = long.Parse(userIdClaim);
 
-			if (result == null)
-			{
-				return NotFound(new { message = "Customer history not found." });
-			}
+            var result = await _customerHistoryService.GetCustomerHistoryAsync(userId);
 
-			return Ok(result);
-		}
-	}
+            if (result == null)
+                return NotFound(new { message = "Customer history not found." });
+
+            return Ok(result);
+        }
+    }
 }

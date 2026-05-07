@@ -1,85 +1,80 @@
 using WebApplications.Application.DTOs;
 using WebApplications.Application.Interfaces.IRepositories;
 using WebApplications.Application.Interfaces.IServices;
+using WebApplications.Domain.Models;
 
 namespace WebApplications.Infrastructure.Services
 {
-	public class CustomerHistoryService : ICustomerHistoryService
-	{
-		private readonly ICustomerHistoryRepository _customerHistoryRepository;
+    public class CustomerHistoryService : ICustomerHistoryService
+    {
+        private readonly ICustomerHistoryRepository _customerHistoryRepository;
 
-		public CustomerHistoryService(ICustomerHistoryRepository customerHistoryRepository)
-		{
-			_customerHistoryRepository = customerHistoryRepository;
-		}
+        public CustomerHistoryService(ICustomerHistoryRepository customerHistoryRepository)
+        {
+            _customerHistoryRepository = customerHistoryRepository;
+        }
 
-		public async Task<CustomerHistoryDto?> GetCustomerHistoryAsync(long customerId)
-		{
-			var customer = await _customerHistoryRepository.GetCustomerHistoryAsync(customerId);
+        public async Task<CustomerHistoryDto?> GetCustomerHistoryAsync(long userId)
+        {
+            var customer = await _customerHistoryRepository.GetCustomerHistoryAsync(userId);
 
-			if (customer == null)
-			{
-				return null;
-			}
+            if (customer == null)
+                return null;
 
-			return MapToCustomerHistoryDto(customer);
-		}
+            return MapToCustomerHistoryDto(customer);
+        }
 
-		public async Task<CustomerHistoryDto?> GetCustomerHistoryByEmailAsync(string email)
-		{
-			var customer = await _customerHistoryRepository.GetCustomerHistoryByEmailAsync(email);
+        private CustomerHistoryDto MapToCustomerHistoryDto(Customer customer)
+        {
+            return new CustomerHistoryDto
+            {
+                CustomerId = customer.Id,
+                FullName = customer.FullName,
+                Phone = customer.Phone,
+                Email = customer.Email,
 
-			if (customer == null)
-			{
-				return null;
-			}
+                PurchaseHistory = customer.SalesInvoices
+                    .OrderByDescending(i => i.InvoiceDate)
+                    .Select(i => new PurchaseHistoryDto
+                    {
+                        InvoiceId = i.Id,
+                        InvoiceDate = i.InvoiceDate,
+                        TotalAmount = i.TotalAmount,
+                        PaidAmount = i.PaidAmount,
+                        DueAmount = i.TotalAmount - i.PaidAmount
+                    })
+                    .ToList(),
 
-			return MapToCustomerHistoryDto(customer);
-		}
+                ServiceHistory = customer.ServiceAppointments
+                    .OrderByDescending(a => a.AppointmentDate)
+                    .Select(a => new ServiceHistoryDto
+                    {
+                        AppointmentId = a.Id,
+                        AppointmentDate = a.AppointmentDate,
+                        ServiceType = a.ServiceType,
+                        Status = a.Status
+                    })
+                    .ToList(),
 
-		private CustomerHistoryDto MapToCustomerHistoryDto(WebApplications.Domain.Models.Customer customer)
-		{
-			return new CustomerHistoryDto
-			{
-				CustomerId = customer.Id,
-				FullName = customer.FullName,
-				Phone = customer.Phone,
-				Email = customer.Email,
+                ReviewHistory = customer.ServiceReviews
+                    .OrderByDescending(r => r.ReviewDate)
+                    .Select(r => new ReviewHistoryDto
+                    {
+                        ReviewId = r.Id,
+                        Rating = r.Rating,
+                        Comment = r.Comment,
+                        ReviewDate = r.ReviewDate,
 
-				PurchaseHistory = customer.SalesInvoices
-					.OrderByDescending(i => i.InvoiceDate)
-					.Select(i => new PurchaseHistoryDto
-					{
-						InvoiceId = i.Id,
-						InvoiceDate = i.InvoiceDate,
-						TotalAmount = i.TotalAmount,
-						PaidAmount = i.PaidAmount,
-						DueAmount = i.TotalAmount - i.PaidAmount
-					})
-					.ToList(),
-
-				ServiceHistory = customer.ServiceAppointments
-					.OrderByDescending(a => a.AppointmentDate)
-					.Select(a => new ServiceHistoryDto
-					{
-						AppointmentId = a.Id,
-						AppointmentDate = a.AppointmentDate,
-						ServiceType = a.ServiceType,
-						Status = a.Status
-					})
-					.ToList(),
-
-				ReviewHistory = customer.ServiceReviews
-					.OrderByDescending(r => r.ReviewDate)
-					.Select(r => new ReviewHistoryDto
-					{
-						ReviewId = r.Id,
-						Rating = r.Rating,
-						Comment = r.Comment,
-						ReviewDate = r.ReviewDate
-					})
-					.ToList()
-			};
-		}
-	}
+                        ServiceAppointmentId = r.ServiceAppointmentId,
+                        ServiceType = r.ServiceAppointment != null
+                            ? r.ServiceAppointment.ServiceType
+                            : string.Empty,
+                        AppointmentDate = r.ServiceAppointment != null
+                            ? r.ServiceAppointment.AppointmentDate
+                            : null
+                    })
+                    .ToList()
+            };
+        }
+    }
 }

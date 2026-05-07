@@ -7,5 +7,6 @@ namespace WebApplications.Application.Interfaces.IServices
     {
 
         Task<ServiceAppointment> CreateAppointmentForUserAsync(CreateAppointmentDto dto, long userId);
+        Task<List<ServiceAppointment>> GetMyAppointmentsAsync(long userId);
     }
 }
