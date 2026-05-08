@@ -1,6 +1,8 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using WebApplications.Application.DTOs;
 using WebApplications.Application.Interfaces.IRepositories;
+using WebApplications.Application.Interfaces.IServices;
 using WebApplications.Domain.Models;
 using WebApplications.Infrastructure.Presistance;
 
@@ -9,15 +11,22 @@ namespace WebApplications.Infrastructure.Repositories
     public class CustomerRepository : ICustomerRepository
     {
         private readonly AppDbContext _context;
+        private readonly UserManager<Users> _userManager;
+        private readonly IEmailService _emailService;
 
-        public CustomerRepository(AppDbContext context)
+        public CustomerRepository(
+            AppDbContext context,
+            UserManager<Users> userManager,
+            IEmailService emailService)
         {
             _context = context;
+            _userManager = userManager;
+            _emailService = emailService;
         }
 
         public async Task<object> GetAllCustomersAsync()
         {
-            var customers = await _context.Customers
+            return await _context.Customers
                 .AsNoTracking()
                 .OrderBy(c => c.FullName)
                 .Select(c => new
@@ -35,8 +44,6 @@ namespace WebApplications.Infrastructure.Repositories
                     }).ToList()
                 })
                 .ToListAsync();
-
-            return customers;
         }
 
         public Task<Customer?> GetCustomerByIdAsync(long id)
@@ -65,8 +72,37 @@ namespace WebApplications.Infrastructure.Repositories
 
         public async Task<Customer> RegisterCustomerWithVehicleAsync(RegisterCustomerDto dto)
         {
+            var existingUser = await _userManager.FindByEmailAsync(dto.Email);
+
+            if (existingUser != null)
+                throw new Exception("User already exists with this email.");
+
+            var existingCustomer = await _context.Customers
+                .FirstOrDefaultAsync(c => c.Email.ToLower() == dto.Email.ToLower());
+
+            if (existingCustomer != null)
+                throw new Exception("Customer already exists with this email.");
+
+            var user = new Users
+            {
+                FullName = dto.FullName,
+                Email = dto.Email,
+                UserName = dto.Email
+            };
+
+            var result = await _userManager.CreateAsync(user, dto.Password);
+
+            if (!result.Succeeded)
+            {
+                var errors = string.Join(", ", result.Errors.Select(e => e.Description));
+                throw new Exception(errors);
+            }
+
+            await _userManager.AddToRoleAsync(user, "Customer");
+
             var customer = new Customer
             {
+                UserId = user.Id,
                 FullName = dto.FullName,
                 Phone = dto.Phone,
                 Email = dto.Email
@@ -85,14 +121,49 @@ namespace WebApplications.Infrastructure.Repositories
 
             await _context.SaveChangesAsync();
 
+            var emailBody = $@"Dear {dto.FullName},
+
+Your customer account has been created successfully.
+
+Login Credentials:
+
+Email: {dto.Email}
+Password: {dto.Password}
+
+You can now:
+- View invoices
+- Book appointments
+- Request unavailable parts
+- View service history
+- Submit service reviews
+
+Please change your password after login.
+
+Thank you,
+Vehicle Parts Center";
+
+            try
+            {
+                await _emailService.SendEmailAsync(
+                    dto.Email,
+                    "Your Customer Portal Account",
+                    emailBody
+                );
+            }
+            catch
+            {
+                // Email failed, but registration should still succeed.
+            }
+
             return customer;
         }
+
         public async Task<object> SearchCustomersAsync(string query)
         {
             query = query.Trim().ToLower();
 
-            var customers = await _context.Customers
-                .Include(c => c.Vehicles)
+            return await _context.Customers
+                .AsNoTracking()
                 .Where(c =>
                     c.Id.ToString().Contains(query) ||
                     c.FullName.ToLower().Contains(query) ||
@@ -119,8 +190,6 @@ namespace WebApplications.Infrastructure.Repositories
                     }).ToList()
                 })
                 .ToListAsync();
-
-            return customers;
         }
 
         public async Task<object?> GetMyProfileAsync(long userId)
