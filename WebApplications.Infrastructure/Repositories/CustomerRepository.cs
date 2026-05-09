@@ -274,5 +274,25 @@ Vehicle Parts Center";
 
             return vehicle;
         }
+
+        public async Task<bool> DeleteMyVehicleAsync(long userId, long vehicleId)
+        {
+            var customer = await _context.Customers
+                .FirstOrDefaultAsync(c => c.UserId == userId);
+
+            if (customer == null)
+                throw new Exception("Customer profile not found.");
+
+            var vehicle = await _context.Vehicles
+                .FirstOrDefaultAsync(v => v.Id == vehicleId && v.CustomerId == customer.Id);
+
+            if (vehicle == null)
+                return false;
+
+            _context.Vehicles.Remove(vehicle);
+            await _context.SaveChangesAsync();
+
+            return true;
+        }
     }
 }

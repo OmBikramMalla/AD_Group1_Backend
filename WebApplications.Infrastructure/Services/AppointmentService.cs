@@ -23,5 +23,15 @@ namespace WebApplications.Infrastructure.Services
         {
             return _appointmentRepository.GetByCustomerUserIdAsync(userId);
         }
+
+        public Task<object> GetAllForStaffAsync()
+        {
+            return _appointmentRepository.GetAllForStaffAsync();
+        }
+
+        public Task<ServiceAppointment> UpdateStatusAsync(long appointmentId, string status)
+        {
+            return _appointmentRepository.UpdateStatusAsync(appointmentId, status);
+        }
     }
 }

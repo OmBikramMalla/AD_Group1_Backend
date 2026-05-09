@@ -22,7 +22,6 @@ namespace WebApplications.Infrastructure.Repositories
 
             if (customer == null)
                 throw new ArgumentException("Customer profile not found for logged-in user.");
-           
 
             var vehicle = await _context.Vehicles
                 .FirstOrDefaultAsync(v =>
@@ -37,8 +36,8 @@ namespace WebApplications.Infrastructure.Repositories
                 CustomerId = customer.Id,
                 VehicleId = dto.VehicleId,
                 AppointmentDate = dto.AppointmentDate.Kind == DateTimeKind.Utc
-                ? dto.AppointmentDate
-                : DateTime.SpecifyKind(dto.AppointmentDate, DateTimeKind.Utc),
+                    ? dto.AppointmentDate
+                    : DateTime.SpecifyKind(dto.AppointmentDate, DateTimeKind.Utc),
                 ServiceType = dto.ServiceType,
                 Description = dto.Description,
                 Status = "Pending"
@@ -62,6 +61,55 @@ namespace WebApplications.Infrastructure.Repositories
                 .Where(a => a.CustomerId == customer.Id)
                 .OrderByDescending(a => a.AppointmentDate)
                 .ToListAsync();
+        }
+
+        public async Task<object> GetAllForStaffAsync()
+        {
+            return await _context.ServiceAppointments
+                .Include(a => a.Customer)
+                .Include(a => a.Vehicle)
+                .OrderByDescending(a => a.AppointmentDate)
+                .Select(a => new
+                {
+                    a.Id,
+                    a.AppointmentDate,
+                    a.ServiceType,
+                    a.Description,
+                    a.Status,
+
+                    CustomerId = a.CustomerId,
+                    CustomerName = a.Customer != null ? a.Customer.FullName : "Unknown",
+                    CustomerPhone = a.Customer != null ? a.Customer.Phone : "",
+                    CustomerEmail = a.Customer != null ? a.Customer.Email : "",
+
+                    VehicleId = a.VehicleId,
+                    VehicleNumber = a.Vehicle != null ? a.Vehicle.VehicleNumber : "",
+                    VehicleBrand = a.Vehicle != null ? a.Vehicle.VehicleBrand : "",
+                    VehicleModel = a.Vehicle != null ? a.Vehicle.VehicleModel : ""
+                })
+                .ToListAsync();
+        }
+
+        public async Task<ServiceAppointment> UpdateStatusAsync(long appointmentId, string status)
+        {
+            var allowedStatuses = new[] { "Pending", "Confirmed", "Completed", "Cancelled" };
+
+            if (string.IsNullOrWhiteSpace(status))
+                throw new ArgumentException("Status is required.");
+
+            if (!allowedStatuses.Contains(status))
+                throw new ArgumentException("Invalid status. Allowed: Pending, Confirmed, Completed, Cancelled.");
+
+            var appointment = await _context.ServiceAppointments.FindAsync(appointmentId);
+
+            if (appointment == null)
+                throw new Exception("Appointment not found.");
+
+            appointment.Status = status;
+
+            await _context.SaveChangesAsync();
+
+            return appointment;
         }
     }
 }

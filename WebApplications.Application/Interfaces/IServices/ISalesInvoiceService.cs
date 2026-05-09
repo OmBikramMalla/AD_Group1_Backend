@@ -10,5 +10,6 @@ namespace WebApplications.Application.Interfaces.IServices
 
         Task<object> GetRecentInvoicesAsync();
         Task<object> GetSalesSummaryAsync();
+        Task<object> GetAllInvoicesAsync();
     }
 }

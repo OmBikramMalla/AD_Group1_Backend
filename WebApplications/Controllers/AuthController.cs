@@ -4,6 +4,8 @@ using WebApplications.Application.DTOs;
 using WebApplications.Domain.Models;
 using WebApplications.Infrastructure.Helpers;
 using WebApplications.Infrastructure.Presistance;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace WebApplications.Controllers
 {
@@ -129,6 +131,47 @@ namespace WebApplications.Controllers
                     role
                 }
             });
+        }
+        [Authorize]
+        [HttpPut("change-password")]
+        public async Task<IActionResult> ChangePassword(ChangePasswordDto dto)
+        {
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (string.IsNullOrWhiteSpace(userIdClaim))
+                return Unauthorized(new { message = "Invalid token." });
+
+            if (!long.TryParse(userIdClaim, out var userId))
+                return Unauthorized(new { message = "Invalid user id in token." });
+
+            var user = await _userManager.FindByIdAsync(userId.ToString());
+
+            if (user == null)
+                return NotFound(new { message = "User not found." });
+
+            if (string.IsNullOrWhiteSpace(dto.CurrentPassword))
+                return BadRequest(new { message = "Current password is required." });
+
+            if (string.IsNullOrWhiteSpace(dto.NewPassword))
+                return BadRequest(new { message = "New password is required." });
+
+            if (dto.NewPassword != dto.ConfirmPassword)
+                return BadRequest(new { message = "New password and confirm password do not match." });
+
+            var result = await _userManager.ChangePasswordAsync(
+                user,
+                dto.CurrentPassword,
+                dto.NewPassword
+            );
+
+            if (!result.Succeeded)
+                return BadRequest(new
+                {
+                    message = "Failed to change password.",
+                    errors = result.Errors.Select(e => e.Description)
+                });
+
+            return Ok(new { message = "Password changed successfully." });
         }
     }
 }
