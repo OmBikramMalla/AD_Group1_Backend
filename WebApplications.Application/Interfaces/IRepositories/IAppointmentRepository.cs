@@ -7,5 +7,8 @@ namespace WebApplications.Application.Interfaces.IRepositories
     {
         Task<ServiceAppointment> CreateForCustomerUserIdAsync(CreateAppointmentDto dto, long userId);
         Task<List<ServiceAppointment>> GetByCustomerUserIdAsync(long userId);
+
+        Task<object> GetAllForStaffAsync();
+        Task<ServiceAppointment> UpdateStatusAsync(long appointmentId, string status);
     }
 }

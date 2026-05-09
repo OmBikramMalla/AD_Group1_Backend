@@ -68,5 +68,12 @@ namespace WebApplications.Controllers
             var result = await _salesInvoiceService.GetSalesSummaryAsync();
             return Ok(result);
         }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAll()
+        {
+            var result = await _salesInvoiceService.GetAllInvoicesAsync();
+            return Ok(result);
+        }
     }
 }

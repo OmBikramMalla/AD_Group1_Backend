@@ -66,5 +66,9 @@ namespace WebApplications.Infrastructure.Services
         {
             return _salesInvoiceRepository.GetSalesSummaryAsync();
         }
+        public Task<object> GetAllInvoicesAsync()
+        {
+            return _salesInvoiceRepository.GetAllInvoicesAsync();
+        }
     }
 }

@@ -6,7 +6,7 @@ using WebApplications.Application.Interfaces.IServices;
 
 namespace WebApplications.Controllers
 {
-    [Authorize(Roles = "Customer")]
+    [Authorize]
     [Route("api/appointments")]
     [ApiController]
     public class AppointmentsController : ControllerBase
@@ -18,6 +18,7 @@ namespace WebApplications.Controllers
             _appointmentService = appointmentService;
         }
 
+        [Authorize(Roles = "Customer")]
         [HttpPost]
         public async Task<IActionResult> CreateAppointment(CreateAppointmentDto dto)
         {
@@ -50,10 +51,7 @@ namespace WebApplications.Controllers
             }
             catch (ArgumentException ex)
             {
-                return BadRequest(new
-                {
-                    message = ex.Message
-                });
+                return BadRequest(new { message = ex.Message });
             }
             catch (Exception ex)
             {
@@ -65,6 +63,7 @@ namespace WebApplications.Controllers
             }
         }
 
+        [Authorize(Roles = "Customer")]
         [HttpGet("my")]
         public async Task<IActionResult> GetMyAppointments()
         {
@@ -87,6 +86,38 @@ namespace WebApplications.Controllers
                 status = a.Status,
                 vehicleId = a.VehicleId
             }));
+        }
+
+        [Authorize(Roles = "Staff")]
+        [HttpGet("staff/all")]
+        public async Task<IActionResult> GetAllForStaff()
+        {
+            var appointments = await _appointmentService.GetAllForStaffAsync();
+            return Ok(appointments);
+        }
+
+        [Authorize(Roles = "Staff")]
+        [HttpPut("{id}/status")]
+        public async Task<IActionResult> UpdateStatus(long id, UpdateAppointmentStatusDto dto)
+        {
+            try
+            {
+                var result = await _appointmentService.UpdateStatusAsync(id, dto.Status);
+
+                return Ok(new
+                {
+                    message = "Appointment status updated successfully.",
+                    appointment = result
+                });
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
         }
     }
 }

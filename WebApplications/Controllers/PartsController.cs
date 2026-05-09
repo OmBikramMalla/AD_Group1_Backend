@@ -6,7 +6,7 @@ using WebApplications.Infrastructure.Presistance;
 
 namespace WebApplications.Controllers
 {
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin,Staff")]
     [Route("api/parts")]
     [ApiController]
     public class PartsController : ControllerBase

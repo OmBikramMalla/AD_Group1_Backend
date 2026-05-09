@@ -24,6 +24,7 @@ namespace WebApplications.Infrastructure.Repositories
                     FullName = c.FullName,
                     TotalSpent = c.SalesInvoices.Sum(i => i.PaidAmount)
                 })
+                .Where(c => c.TotalSpent > 0)
                 .OrderByDescending(c => c.TotalSpent)
                 .ToListAsync();
         }

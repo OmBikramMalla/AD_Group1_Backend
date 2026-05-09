@@ -61,7 +61,18 @@ namespace WebApplications.Infrastructure.Repositories
                 invoice.Items.Add(invoiceItem);
             }
 
-            invoice.TotalAmount = totalAmount;
+            var originalTotal = totalAmount;
+            var discountAmount = originalTotal > 5000 ? originalTotal * 0.10m : 0;
+            var finalTotal = originalTotal - discountAmount;
+
+            if (dto.PaidAmount < 0)
+                throw new Exception("Paid amount cannot be negative.");
+
+            if (dto.PaidAmount > finalTotal)
+                throw new Exception("Paid amount cannot be greater than total amount.");
+
+            invoice.TotalAmount = finalTotal;
+            invoice.PaidAmount = dto.PaidAmount;
 
             _context.SalesInvoices.Add(invoice);
             await _context.SaveChangesAsync();
@@ -117,6 +128,25 @@ namespace WebApplications.Infrastructure.Repositories
                 PendingInvoices = invoices.Count(i => (i.TotalAmount - i.PaidAmount) > 0),
                 TotalPendingAmount = invoices.Sum(i => i.TotalAmount - i.PaidAmount)
             };
+        }
+
+        public async Task<object> GetAllInvoicesAsync()
+        {
+            return await _context.SalesInvoices
+                .Include(i => i.Customer)
+                .OrderByDescending(i => i.InvoiceDate)
+                .Select(i => new
+                {
+                    i.Id,
+                    i.InvoiceDate,
+                    i.TotalAmount,
+                    i.PaidAmount,
+                    DueAmount = i.TotalAmount - i.PaidAmount,
+                    CustomerName = i.Customer != null ? i.Customer.FullName : "Unknown",
+                    CustomerEmail = i.Customer != null ? i.Customer.Email : "",
+                    Status = (i.TotalAmount - i.PaidAmount) > 0 ? "Unpaid" : "Completed"
+                })
+                .ToListAsync();
         }
     }
 }

@@ -106,5 +106,23 @@ namespace WebApplications.Controllers
                 return BadRequest(new { message = ex.Message });
             }
         }
+
+        [HttpDelete("vehicles/{vehicleId}")]
+        public async Task<IActionResult> DeleteVehicle(long vehicleId)
+        {
+            try
+            {
+                var deleted = await _customerService.DeleteMyVehicleAsync(GetUserId(), vehicleId);
+
+                if (!deleted)
+                    return NotFound(new { message = "Vehicle not found." });
+
+                return Ok(new { message = "Vehicle deleted successfully." });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
     }
 }
