@@ -55,6 +55,9 @@ builder.Services.AddScoped<ISalesInvoiceService, SalesInvoiceService>();
 builder.Services.AddScoped<IStaffRepository, StaffRepository>();
 builder.Services.AddScoped<IStaffService, StaffService>();
 
+builder.Services.AddScoped<IPurchaseInvoiceRepository, PurchaseInvoiceRepository>();
+builder.Services.AddScoped<IPurchaseInvoiceService, PurchaseInvoiceService>();
+
 builder.Services.AddScoped<IEmailService, EmailService>();
 
 // Identity
