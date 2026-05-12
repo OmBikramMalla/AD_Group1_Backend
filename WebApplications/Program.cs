@@ -12,7 +12,6 @@ using WebApplications.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-// Feature 2: Staff management services are registered below (lines 51-55)
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -57,6 +56,9 @@ builder.Services.AddScoped<IStaffService, StaffService>();
 
 builder.Services.AddScoped<IPurchaseInvoiceRepository, PurchaseInvoiceRepository>();
 builder.Services.AddScoped<IPurchaseInvoiceService, PurchaseInvoiceService>();
+
+builder.Services.AddScoped<IPartRepository, PartRepository>();
+builder.Services.AddScoped<IPartService, PartService>();
 
 builder.Services.AddScoped<IEmailService, EmailService>();
 
