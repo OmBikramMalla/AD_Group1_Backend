@@ -65,6 +65,11 @@ builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IAdminNotificationRepository, AdminNotificationRepository>();
 builder.Services.AddScoped<IAdminNotificationService, AdminNotificationService>();
 
+builder.Services.AddScoped<IFinancialReportRepository, FinancialReportRepository>();
+builder.Services.AddScoped<IFinancialReportService, FinancialReportService>();
+
+builder.Services.AddScoped<IAdminDashboardService, AdminDashboardService>();
+
 // Identity
 builder.Services.AddIdentity<Users, Roles>(options =>
 {
