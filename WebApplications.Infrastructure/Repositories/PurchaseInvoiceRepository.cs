@@ -19,14 +19,17 @@ namespace WebApplications.Infrastructure.Repositories
         {
             return await _context.PurchaseInvoices
                 .Include(pi => pi.Vendor)
-                .OrderByDescending(pi => pi.InvoiceDate)
+                .Include(pi => pi.Items)
+                .OrderByDescending(pi => pi.PurchaseDate)
                 .Select(pi => new
                 {
                     pi.Id,
-                    pi.InvoiceDate,
+                    pi.InvoiceNumber,
+                    pi.PurchaseDate,
                     pi.TotalAmount,
                     pi.Notes,
-                    VendorName = pi.Vendor != null ? pi.Vendor.VendorName : "Unknown"
+                    VendorName = pi.Vendor != null ? pi.Vendor.VendorName : "Unknown",
+                    ItemCount = pi.Items.Sum(i => i.Quantity)
                 })
                 .ToListAsync();
         }
@@ -41,16 +44,19 @@ namespace WebApplications.Infrastructure.Repositories
                 .Select(pi => new
                 {
                     pi.Id,
-                    pi.InvoiceDate,
+                    pi.InvoiceNumber,
+                    pi.PurchaseDate,
                     pi.TotalAmount,
                     pi.Notes,
                     Vendor = pi.Vendor,
                     Items = pi.Items.Select(i => new
                     {
                         i.Id,
+                        i.PartId,
+                        PartName = i.Part != null ? i.Part.PartName : "Unknown",
                         i.Quantity,
                         i.UnitCost,
-                        PartName = i.Part != null ? i.Part.PartName : "Unknown"
+                        LineTotal = i.Quantity * i.UnitCost
                     }).ToList()
                 })
                 .FirstOrDefaultAsync();
@@ -65,48 +71,71 @@ namespace WebApplications.Infrastructure.Repositories
             if (dto.Items == null || !dto.Items.Any())
                 throw new Exception("At least one item is required for a purchase invoice.");
 
-            var invoice = new PurchaseInvoice
+            if (string.IsNullOrWhiteSpace(dto.InvoiceNumber))
+                throw new Exception("Invoice number is required.");
+
+            var duplicateInvoice = await _context.PurchaseInvoices
+                .AnyAsync(pi => pi.InvoiceNumber == dto.InvoiceNumber);
+
+            if (duplicateInvoice)
+                throw new Exception("Invoice number already exists.");
+
+            await using var transaction = await _context.Database.BeginTransactionAsync();
+
+            try
             {
-                VendorId = dto.VendorId,
-                Notes = dto.Notes,
-                InvoiceDate = DateTime.UtcNow
-            };
-
-            decimal totalAmount = 0;
-
-            foreach (var itemDto in dto.Items)
-            {
-                if (itemDto.Quantity <= 0)
-                    throw new Exception("Quantity must be greater than zero.");
-
-                if (itemDto.UnitCost < 0)
-                    throw new Exception("Unit cost cannot be negative.");
-
-                var part = await _context.Parts.FindAsync(itemDto.PartId);
-                if (part == null)
-                    throw new Exception($"Part with ID {itemDto.PartId} not found.");
-
-                var invoiceItem = new PurchaseInvoiceItem
+                var invoice = new PurchaseInvoice
                 {
-                    PartId = part.Id,
-                    Quantity = itemDto.Quantity,
-                    UnitCost = itemDto.UnitCost
+                    InvoiceNumber = dto.InvoiceNumber,
+                    VendorId = dto.VendorId,
+                    PurchaseDate = dto.PurchaseDate == default ? DateTime.UtcNow : dto.PurchaseDate,
+                    InvoiceDate = DateTime.UtcNow,
+                    Notes = dto.Notes
                 };
 
-                totalAmount += itemDto.UnitCost * itemDto.Quantity;
+                decimal totalAmount = 0;
 
-                // Update stock: Purchase increases stock quantity
-                part.StockQuantity += itemDto.Quantity;
+                foreach (var itemDto in dto.Items)
+                {
+                    if (itemDto.PartId <= 0)
+                        throw new Exception("Valid part is required.");
 
-                invoice.Items.Add(invoiceItem);
+                    if (itemDto.Quantity <= 0)
+                        throw new Exception("Quantity must be greater than zero.");
+
+                    if (itemDto.UnitCost <= 0)
+                        throw new Exception("Unit cost must be greater than zero.");
+
+                    var part = await _context.Parts.FindAsync(itemDto.PartId);
+                    if (part == null)
+                        throw new Exception($"Part with ID {itemDto.PartId} not found.");
+
+                    var lineTotal = itemDto.UnitCost * itemDto.Quantity;
+                    totalAmount += lineTotal;
+
+                    part.StockQuantity += itemDto.Quantity;
+
+                    invoice.Items.Add(new PurchaseInvoiceItem
+                    {
+                        PartId = part.Id,
+                        Quantity = itemDto.Quantity,
+                        UnitCost = itemDto.UnitCost
+                    });
+                }
+
+                invoice.TotalAmount = totalAmount;
+
+                _context.PurchaseInvoices.Add(invoice);
+                await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
+
+                return invoice;
             }
-
-            invoice.TotalAmount = totalAmount;
-
-            _context.PurchaseInvoices.Add(invoice);
-            await _context.SaveChangesAsync();
-
-            return invoice;
+            catch
+            {
+                await transaction.RollbackAsync();
+                throw;
+            }
         }
     }
 }

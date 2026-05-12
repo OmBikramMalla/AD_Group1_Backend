@@ -7,26 +7,26 @@ namespace WebApplications.Infrastructure.Services
 {
     public class PurchaseInvoiceService : IPurchaseInvoiceService
     {
-        private readonly IPurchaseInvoiceRepository _repository;
+        private readonly IPurchaseInvoiceRepository _purchaseInvoiceRepository;
 
-        public PurchaseInvoiceService(IPurchaseInvoiceRepository repository)
+        public PurchaseInvoiceService(IPurchaseInvoiceRepository purchaseInvoiceRepository)
         {
-            _repository = repository;
+            _purchaseInvoiceRepository = purchaseInvoiceRepository;
         }
 
-        public async Task<IEnumerable<object>> GetAllAsync()
+        public Task<IEnumerable<object>> GetAllAsync()
         {
-            return await _repository.GetAllAsync();
+            return _purchaseInvoiceRepository.GetAllAsync();
         }
 
-        public async Task<object?> GetByIdAsync(long id)
+        public Task<object?> GetByIdAsync(long id)
         {
-            return await _repository.GetByIdAsync(id);
+            return _purchaseInvoiceRepository.GetByIdAsync(id);
         }
 
-        public async Task<PurchaseInvoice> CreateAsync(CreatePurchaseInvoiceDto dto)
+        public Task<PurchaseInvoice> CreateAsync(CreatePurchaseInvoiceDto dto)
         {
-            return await _repository.CreateAsync(dto);
+            return _purchaseInvoiceRepository.CreateAsync(dto);
         }
     }
 }

@@ -2,7 +2,9 @@ namespace WebApplications.Application.DTOs
 {
     public class CreatePurchaseInvoiceDto
     {
+        public string InvoiceNumber { get; set; } = string.Empty;
         public long VendorId { get; set; }
+        public DateTime PurchaseDate { get; set; }
         public string Notes { get; set; } = string.Empty;
         public List<CreatePurchaseInvoiceItemDto> Items { get; set; } = new();
     }
