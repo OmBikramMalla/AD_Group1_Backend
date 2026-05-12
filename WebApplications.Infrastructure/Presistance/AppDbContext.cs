@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using WebApplications.Domain.Models;
 
@@ -19,6 +19,8 @@ namespace WebApplications.Infrastructure.Presistance
         public DbSet<ServiceReview> ServiceReviews { get; set; }
         public DbSet<PartRequest> PartRequests { get; set; }
         public DbSet<Vendor> Vendors { get; set; }
+        public DbSet<PurchaseInvoice> PurchaseInvoices { get; set; }
+        public DbSet<PurchaseInvoiceItem> PurchaseInvoiceItems { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -60,6 +62,24 @@ namespace WebApplications.Infrastructure.Presistance
                 .HasOne(r => r.ServiceAppointment)
                 .WithMany(a => a.Reviews)
                 .HasForeignKey(r => r.ServiceAppointmentId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<PurchaseInvoice>()
+                .HasOne(p => p.Vendor)
+                .WithMany()
+                .HasForeignKey(p => p.VendorId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<PurchaseInvoiceItem>()
+                .HasOne(i => i.PurchaseInvoice)
+                .WithMany(p => p.Items)
+                .HasForeignKey(i => i.PurchaseInvoiceId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<PurchaseInvoiceItem>()
+                .HasOne(i => i.Part)
+                .WithMany()
+                .HasForeignKey(i => i.PartId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Roles>().HasData(

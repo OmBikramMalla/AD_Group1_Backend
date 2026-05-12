@@ -7,3 +7,4 @@ obj/
 .env
 Logs/
 **/appsettings.Development.json
+.idea/
