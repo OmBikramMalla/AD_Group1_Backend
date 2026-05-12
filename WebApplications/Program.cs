@@ -53,6 +53,9 @@ builder.Services.AddScoped<ISalesInvoiceService, SalesInvoiceService>();
 
 builder.Services.AddScoped<IEmailService, EmailService>();
 
+builder.Services.AddScoped<IAdminNotificationRepository, AdminNotificationRepository>();
+builder.Services.AddScoped<IAdminNotificationService, AdminNotificationService>();
+
 // Identity
 builder.Services.AddIdentity<Users, Roles>(options =>
 {
