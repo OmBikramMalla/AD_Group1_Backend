@@ -72,6 +72,7 @@ namespace WebApplications.Infrastructure.Repositories
                 throw new Exception("Paid amount cannot be greater than total amount.");
 
             invoice.TotalAmount = finalTotal;
+            invoice.DiscountAmount = discountAmount;
             invoice.PaidAmount = dto.PaidAmount;
 
             _context.SalesInvoices.Add(invoice);
@@ -140,6 +141,7 @@ namespace WebApplications.Infrastructure.Repositories
                     i.Id,
                     i.InvoiceDate,
                     i.TotalAmount,
+                    i.DiscountAmount,
                     i.PaidAmount,
                     DueAmount = i.TotalAmount - i.PaidAmount,
                     CustomerName = i.Customer != null ? i.Customer.FullName : "Unknown",

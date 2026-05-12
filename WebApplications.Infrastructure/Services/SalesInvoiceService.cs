@@ -37,6 +37,7 @@ namespace WebApplications.Infrastructure.Services
                        $"Invoice ID: {invoice.Id}\n" +
                        $"Invoice Date: {invoice.InvoiceDate}\n" +
                        $"Total Amount: Rs. {invoice.TotalAmount}\n" +
+                       (invoice.DiscountAmount > 0 ? $"Loyalty Discount Applied: Rs. {invoice.DiscountAmount}\n" : "") +
                        $"Paid Amount: Rs. {invoice.PaidAmount}\n" +
                        $"Due Amount: Rs. {invoice.TotalAmount - invoice.PaidAmount}\n\n" +
                        $"Items:\n";

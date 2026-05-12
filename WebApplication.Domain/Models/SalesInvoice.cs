@@ -5,6 +5,7 @@ namespace WebApplications.Domain.Models
         public long Id { get; set; }
         public DateTime InvoiceDate { get; set; } = DateTime.UtcNow;
         public decimal TotalAmount { get; set; }
+        public decimal DiscountAmount { get; set; }
         public decimal PaidAmount { get; set; }
 
         public long CustomerId { get; set; }

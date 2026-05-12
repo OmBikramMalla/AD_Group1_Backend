@@ -12,7 +12,7 @@ using WebApplications.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-
+using WebApplications.Infrastructure.BackgroundServices;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -69,6 +69,9 @@ builder.Services.AddScoped<IFinancialReportRepository, FinancialReportRepository
 builder.Services.AddScoped<IFinancialReportService, FinancialReportService>();
 
 builder.Services.AddScoped<IAdminDashboardService, AdminDashboardService>();
+
+// Background Services
+builder.Services.AddHostedService<ReminderBackgroundService>();
 
 // Identity
 builder.Services.AddIdentity<Users, Roles>(options =>
