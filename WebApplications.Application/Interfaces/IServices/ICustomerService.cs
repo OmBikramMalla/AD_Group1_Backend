@@ -15,5 +15,6 @@ namespace WebApplications.Application.Interfaces.IServices
         Task<Vehicle> AddMyVehicleAsync(long userId, VehicleDto dto);
         Task<Vehicle?> UpdateMyVehicleAsync(long userId, long vehicleId, VehicleDto dto);
         Task<bool> DeleteMyVehicleAsync(long userId, long vehicleId);
+        Task<IEnumerable<object>> GetMyVehiclesAsync(long userId);
     }
 }

@@ -124,5 +124,20 @@ namespace WebApplications.Controllers
                 return BadRequest(new { message = ex.Message });
             }
         }
+
+        [HttpGet("vehicles")]
+        public async Task<IActionResult> GetMyVehicles()
+        {
+            try
+            {
+                var result = await _customerService.GetMyVehiclesAsync(GetUserId());
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
     }
 }

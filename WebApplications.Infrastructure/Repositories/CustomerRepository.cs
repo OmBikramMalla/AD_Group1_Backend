@@ -294,5 +294,25 @@ Vehicle Parts Center";
 
             return true;
         }
+
+        public async Task<IEnumerable<object>> GetMyVehiclesAsync(long userId)
+        {
+            var customer = await _context.Customers
+                .FirstOrDefaultAsync(c => c.UserId == userId);
+
+            if (customer == null)
+                throw new Exception("Customer profile not found.");
+
+            return await _context.Vehicles
+                .Where(v => v.CustomerId == customer.Id)
+                .Select(v => new
+                {
+                    v.Id,
+                    v.VehicleNumber,
+                    v.VehicleModel,
+                    v.VehicleBrand
+                })
+                .ToListAsync();
+        }
     }
 }

@@ -8,7 +8,6 @@ namespace WebApplications.Application.Middlewares
 {
     public class ExceptionHandlingMiddleware
     {
-        // You may need to install the Microsoft.AspNetCore.Http.Abstractions package into your projec
             private readonly RequestDelegate _next;
 
             public ExceptionHandlingMiddleware(RequestDelegate next)

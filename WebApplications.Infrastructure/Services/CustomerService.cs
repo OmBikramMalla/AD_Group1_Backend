@@ -63,5 +63,9 @@ namespace WebApplications.Infrastructure.Services
         {
             return await _customerRepository.DeleteMyVehicleAsync(userId, vehicleId);
         }
+        public async Task<IEnumerable<object>> GetMyVehiclesAsync(long userId)
+        {
+            return await _customerRepository.GetMyVehiclesAsync(userId);
+        }
     }
 }

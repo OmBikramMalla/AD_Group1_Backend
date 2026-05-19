@@ -35,7 +35,15 @@ namespace WebApplications.Controllers
                 return Ok(new
                 {
                     message = "Review submitted successfully",
-                    review = result
+                    review = new
+                    {
+                        id = result.Id,
+                        serviceAppointmentId = result.ServiceAppointmentId,
+                        customerId = result.CustomerId,
+                        rating = result.Rating,
+                        comment = result.Comment,
+                        reviewDate = result.ReviewDate
+                    }
                 });
             }
             catch (ArgumentException ex)
@@ -43,6 +51,14 @@ namespace WebApplications.Controllers
                 return BadRequest(new
                 {
                     message = ex.Message
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    message = ex.Message,
+                    inner = ex.InnerException?.Message
                 });
             }
         }
